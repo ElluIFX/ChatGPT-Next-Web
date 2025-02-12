@@ -91,7 +91,7 @@ const ThinkCollapse = styled(
 
     .ant-collapse-content-box {
       padding: 8px 12px !important;
-      font-size: ${(props) => props.fontSize ?? 14}px;
+      font-size: 14px;
       color: var(--black);
       opacity: 0.8;
     }
