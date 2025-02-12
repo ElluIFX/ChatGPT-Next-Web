@@ -127,10 +127,7 @@ const cn = {
       if (submitKey === String(SubmitKey.Enter)) {
         inputHints += "，Shift + Enter 换行";
       }
-      return (
-        inputHints +
-        "，/ 触发补全，: 触发命令\nCtrl + Shift + ;  快速复制最后一个代码块\nCtrl + Shift + L 重新获取 AI 回复"
-      );
+      return inputHints + "，/ 触发补全，: 触发命令";
     },
     Send: "发送",
     StartSpeak: "说话",
