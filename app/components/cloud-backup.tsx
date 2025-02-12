@@ -749,6 +749,7 @@ export function CloudBackupPage() {
                 </div>
               </div>
             )}
+            <div className={styles["page-bottom"]}></div>
           </div>
         </div>
       </div>
