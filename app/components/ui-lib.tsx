@@ -504,27 +504,14 @@ export function SearchSelector<T>(props: {
     }
   };
   // 过滤列表项
-  const filteredItems = props.items
-    .filter(
-      (item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.subTitle &&
-          item.subTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (typeof item.value === "string" &&
-          item.value.toLowerCase().includes(searchQuery.toLowerCase())),
-    )
-    .sort((a, b) => {
-      // 将选中的项目排在前面
-      const aSelected = selectedValues.includes(a.value);
-      const bSelected = selectedValues.includes(b.value);
-      if (aSelected && !bSelected) {
-        return -1;
-      }
-      if (!aSelected && bSelected) {
-        return 1;
-      }
-      return 0;
-    });
+  const filteredItems = props.items.filter(
+    (item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.subTitle &&
+        item.subTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (typeof item.value === "string" &&
+        item.value.toLowerCase().includes(searchQuery.toLowerCase())),
+  );
 
   return (
     <div className={styles["selector"]} onClick={() => props.onClose?.()}>
