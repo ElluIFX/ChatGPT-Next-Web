@@ -96,7 +96,6 @@
     }
 
     &:disabled {
-      background-color: var(--gray);
       cursor: not-allowed;
     }
 
@@ -162,6 +161,8 @@
 
 .message {
   padding: 10px;
+  border: var(--border-in-light);
+  background-color: var(--gray);
   border-radius: 8px;
   font-size: 14px;
   text-align: center;

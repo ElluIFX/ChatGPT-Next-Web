@@ -28,6 +28,15 @@ const localStorage = safeLocalStorage();
 const serverAddressKey = "serverAddress";
 const userNameKey = "userName";
 
+// Generate a random UUID v4
+function generateUUID(): string {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export function CloudBackupPage() {
   const navigate = useNavigate();
   const isMobileScreen = useMobileScreen();
@@ -40,7 +49,6 @@ export function CloudBackupPage() {
     text: string;
     type: "info" | "success" | "error";
   } | null>(null);
-  const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [importingFileNames, setImportingFileNames] = useState<Set<string>>(
@@ -90,7 +98,7 @@ export function CloudBackupPage() {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "用户名不能为空", type: "error" });
+      setMessage({ text: "标识符不能为空", type: "error" });
       return;
     }
     try {
@@ -146,10 +154,11 @@ export function CloudBackupPage() {
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         const data = JSON.parse(xhr.responseText);
-        showToast(data.message || "云备份成功！");
-        setMessage({ text: data.message || "云备份成功！", type: "success" });
-        // 执行一次云导入更新列表
-        handleImport();
+        setMessage({
+          text: data.message || "云备份成功！",
+          type: "success",
+        });
+        handleImport(true);
       } else {
         const errorData = JSON.parse(xhr.responseText);
         setMessage({
@@ -173,14 +182,14 @@ export function CloudBackupPage() {
     xhr.send(formData);
   };
 
-  const handleImport = async () => {
+  const handleImport = async (skipSuccessMessage: boolean = false) => {
     if (serverAddress.trim() === "") {
       handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "用户名不能为空", type: "error" });
+      setMessage({ text: "标识符不能为空", type: "error" });
       return;
     }
     try {
@@ -191,7 +200,6 @@ export function CloudBackupPage() {
       return;
     }
     setImportLoading(true);
-    setMessage(null);
     try {
       const response = await fetch(`${serverAddress}/api/getlist`, {
         headers: {
@@ -206,7 +214,9 @@ export function CloudBackupPage() {
       }
       const data: FileInfo[] = await response.json();
       setFiles(data);
-      setMessage({ text: "文件列表加载成功！", type: "success" });
+      if (!skipSuccessMessage) {
+        setMessage({ text: "文件列表加载成功！", type: "success" });
+      }
     } catch (error: any) {
       console.error(error);
       setMessage({
@@ -242,7 +252,7 @@ export function CloudBackupPage() {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "用户名不能为空", type: "error" });
+      setMessage({ text: "标识符不能为空", type: "error" });
       return;
     }
     if (serverAddress.trim() === "") {
@@ -306,7 +316,7 @@ export function CloudBackupPage() {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "用户名不能为空", type: "error" });
+      setMessage({ text: "标识符不能为空", type: "error" });
       return;
     }
     if (serverAddress.trim() === "") {
@@ -370,7 +380,7 @@ export function CloudBackupPage() {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "用户名不能为空", type: "error" });
+      setMessage({ text: "标识符不能为空", type: "error" });
       return;
     }
     if (serverAddress.trim() === "") {
@@ -426,7 +436,7 @@ export function CloudBackupPage() {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "用户名不能为空", type: "error" });
+      setMessage({ text: "标识符不能为空", type: "error" });
       return;
     }
     if (serverAddress.trim() === "") {
@@ -482,18 +492,6 @@ export function CloudBackupPage() {
     return `${size} ${sizes[i]}`;
   };
 
-  // 处理消息显示和自动隐藏
-  useEffect(() => {
-    if (message) {
-      setIsMessageVisible(true);
-      const timer = setTimeout(() => {
-        setIsMessageVisible(false);
-        setTimeout(() => setMessage(null), 300); // 等待淡出动画完成后再清除消息
-      }, 3000); // 3秒后开始淡出
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
-
   return (
     <div className={styles.container}>
       <div className={styles.window}>
@@ -501,7 +499,7 @@ export function CloudBackupPage() {
           <div className={styles["window-header-title"]}>
             <div className={styles["window-header-main-title"]}>云备份管理</div>
             <div className={styles["window-header-sub-title"]}>
-              备份和恢复您的聊天记录
+              在不同设备上备份和恢复您的聊天记录
             </div>
           </div>
           <div className={styles["window-actions"]}>
@@ -532,29 +530,50 @@ export function CloudBackupPage() {
                 id={userNameKey}
                 value={userName}
                 onChange={(e) => handleUserNameChange(e.target.value)}
-                placeholder="请输入用户名 (您的唯一标识符, 备份和恢复时需要一致)"
+                placeholder="请输入您的用户标识符 (第一次使用请生成)"
                 disabled={loading}
               />
-              <div className={styles["button-container"]}>
-                <IconButton
-                  text="清除本地所有对话和设置"
-                  onClick={async () => {
-                    if (await showConfirm("确认清除所有聊天、设置数据？")) {
-                      chatStore.clearAllData();
-                    }
-                  }}
-                  type="danger"
-                />
-                <IconButton
-                  text="清除云端所有对话记录"
-                  onClick={async () => {
-                    if (await showConfirm("确认清除所有聊天、设置数据？")) {
-                      await handleALLFileDelete();
-                    }
-                  }}
-                  type="danger"
-                />
-              </div>
+            </div>
+
+            <div className={styles["button-container"]}>
+              <IconButton
+                text="清除本地所有对话和设置"
+                onClick={async () => {
+                  if (await showConfirm("确认清除所有聊天、设置数据？")) {
+                    chatStore.clearAllData();
+                  }
+                }}
+                type="danger"
+              />
+              <IconButton
+                text="清除云端所有对话记录"
+                onClick={async () => {
+                  if (await showConfirm("确认清除所有聊天、设置数据？")) {
+                    await handleALLFileDelete();
+                    setFiles([]);
+                  }
+                }}
+                type="danger"
+              />
+              <IconButton
+                text="生成新的标识符"
+                onClick={async () => {
+                  if (
+                    userName.trim() === "" ||
+                    (await showConfirm(
+                      "确认生成新的标识符？(将覆盖当前标识符, 请先备份)",
+                    ))
+                  ) {
+                    handleUserNameChange(generateUUID());
+                    setMessage({
+                      text: "您的标识符已生成，请妥善保管",
+                      type: "info",
+                    });
+                    setFiles([]);
+                  }
+                }}
+                type={userName.trim() === "" ? "primary" : "danger"}
+              />
             </div>
 
             <div className={styles["backup-actions"]}>
@@ -578,6 +597,12 @@ export function CloudBackupPage() {
               <div className={styles["progress-container"]}>
                 <progress value={uploadProgress} max="100" />
                 <span>{uploadProgress}%</span>
+              </div>
+            )}
+
+            {message && (
+              <div className={`${styles.message} ${styles[message.type]}`}>
+                {message.text}
               </div>
             )}
 
@@ -653,15 +678,6 @@ export function CloudBackupPage() {
                       </div>
                     ))}
                 </div>
-              </div>
-            )}
-
-            {message && (
-              <div
-                className={`${styles.message} ${styles[message.type]}`}
-                style={{ opacity: isMessageVisible ? 1 : 0 }}
-              >
-                {message.text}
               </div>
             )}
           </div>
