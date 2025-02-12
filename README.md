@@ -5,7 +5,7 @@
 **分歧节点：2.12.3，侧重维护 OpenAI 类型渠道**
 
 docker 镜像：
-- dockerhub 托管: `justma/chatgpt-next-chat:latest`
+- dockerhub 托管: `elluros/chatgpt-next-chat:latest`
 - github  托管: `ghcr.io/qabot-zh/chatgpt-next-chat:latest`
 
 ## 二开新增特性
@@ -23,9 +23,9 @@ docker 镜像：
    - 翻译前
 
   <img src="./docs/images/translate-1.png" width="80%" alt="before translate" style="display:inline-block; margin-right:10px"/>
-  
+
    - 翻译后
-   
+
    <img src="./docs/images/translate-2.png" width="80%" alt="after translate" style="display:inline-block; margin-right:10px"/>
 
 - 基于 AI 模型的 OCR
@@ -58,9 +58,9 @@ docker 镜像：
   - 思考中
 
   <img src="./docs/images/thinking.png" width="80%" alt="thinking" style="display:inline-block; margin-right:10px"/>
-  
+
   - 思考结束
-  
+
   <img src="./docs/images/think.png" width="80%" alt="think" style="display:inline-block; margin-right:10px"/>
 
 
@@ -120,7 +120,7 @@ If you want to disable parse settings from url, set this to 1. （要禁止url�
 
 To control custom models, use `+` to add a custom model, use `-` to hide a model, use `name=displayName<description>` to customize model name, separated by comma.
 
-User `-*provider` to disable specified models, `+*provider` to enable specified models. 
+User `-*provider` to disable specified models, `+*provider` to enable specified models.
 
 User `-all` to disable all default models, `+all` to enable all default models. （自定义模型参数）
 
@@ -144,7 +144,7 @@ Set the subtitle of sidebar. Support html parsing. （侧边栏子标题，支�
 <div style="line-height: 1.8;">
    <div>AI-Chat 演示站</div>
    <div>测试侧边栏文字 HTML 解析</div>
-   <a href="https://github.com/QAbot-zh/ChatGPT-Next-Web" 
+   <a href="https://github.com/QAbot-zh/ChatGPT-Next-Web"
       style="color: #1890ff;
                text-decoration: none;
                font-weight: 500;
@@ -188,7 +188,7 @@ Set the unathorized info to cover default unathorized info. （自定义错误�
 ### `WHITE_WEBDEV_ENDPOINTS` (optional)
 
 You can use this option if you want to increase the number of webdav service addresses you are allowed to access, as required by the format：
-- Each address must be a complete endpoint 
+- Each address must be a complete endpoint
 > `https://xxxx/yyy`
 - Multiple addresses are connected by ', '
 

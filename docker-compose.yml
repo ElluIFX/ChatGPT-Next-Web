@@ -1,9 +1,9 @@
 version: "3.9"
 services:
   chatgpt-next-web:
-    profiles: [ "no-proxy" ]
+    profiles: ["no-proxy"]
     container_name: chatgpt-next-web
-    image: justma/chatgpt-next-web
+    image: elluros/chatgpt-next-web
     ports:
       - 3000:3000
     environment:
@@ -19,9 +19,9 @@ services:
       - OPENAI_SB=$OPENAI_SB
 
   chatgpt-next-web-proxy:
-    profiles: [ "proxy" ]
+    profiles: ["proxy"]
     container_name: chatgpt-next-web-proxy
-    image: justma/chatgpt-next-web
+    image: elluros/chatgpt-next-web
     ports:
       - 3000:3000
     environment:
