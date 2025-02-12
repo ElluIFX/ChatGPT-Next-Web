@@ -264,7 +264,10 @@ export function SideBar(props: { className?: string }) {
             icon={<DiscoveryIcon />}
             text={shouldNarrow ? undefined : Locale.Discovery.Name}
             className={styles["sidebar-bar-button"]}
-            onClick={() => setShowPluginSelector(true)}
+            // onClick={() => setShowPluginSelector(true)}
+            onClick={() => {
+              navigate(Path.SearchChat, { state: { fromHome: true } });
+            }}
             shadow
           />
         </div>
