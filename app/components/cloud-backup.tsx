@@ -200,6 +200,9 @@ export function CloudBackupPage() {
       return;
     }
     setImportLoading(true);
+    if (!skipSuccessMessage) {
+      setMessage(null);
+    }
     try {
       const response = await fetch(`${serverAddress}/api/getlist`, {
         headers: {
@@ -586,7 +589,7 @@ export function CloudBackupPage() {
               />
               <IconButton
                 text={importLoading ? "加载中..." : "加载云端备份记录"}
-                onClick={handleImport}
+                onClick={() => handleImport(false)}
                 disabled={importLoading}
                 type="primary"
                 icon={<DownloadIcon />}
