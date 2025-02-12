@@ -900,15 +900,13 @@ export function ChatActions(props: {
           />
         )}
 
-        {!isMobileScreen && (
-          <ChatAction
-            onClick={() => {
-              navigate(Path.CloudBackup);
-            }}
-            text={Locale.Chat.InputActions.CloudBackup}
-            icon={<FileExpressIcon />}
-          />
-        )}
+        <ChatAction
+          onClick={() => {
+            navigate(Path.CloudBackup);
+          }}
+          text={Locale.Chat.InputActions.CloudBackup}
+          icon={<FileExpressIcon />}
+        />
 
         <ChatAction
           onClick={handleTranslate}
@@ -2170,9 +2168,7 @@ function _Chat() {
                   <div className={styles["chat-message-action-date"]}>
                     {isContext
                       ? Locale.Chat.IsContext
-                      : `${message.date.toLocaleString()}${
-                          message.model ? ` - Model: ${message.model}` : ""
-                        }`}
+                      : `${message.date.toLocaleString()}`}
                   </div>
                   {showActions && (
                     <div className={styles["chat-message-actions"]}>

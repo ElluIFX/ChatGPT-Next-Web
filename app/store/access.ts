@@ -51,6 +51,7 @@ const DEFAULT_ACCESS_STATE = {
   disableFastLink: false,
   customModels: "",
   defaultModel: "",
+  defaultBackupServerAddress: "",
   customHello: "",
   UnauthorizedInfo: "",
 
@@ -103,6 +104,10 @@ export const useAccessStore = createPersistStore(
     setUnauthorizedInfo() {
       this.fetch();
       return get().UnauthorizedInfo;
+    },
+    setDefaultBackupServerAddress() {
+      this.fetch();
+      return get().defaultBackupServerAddress;
     },
     enabledAccessControl() {
       this.fetch();

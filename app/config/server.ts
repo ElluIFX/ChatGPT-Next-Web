@@ -180,6 +180,7 @@ export const getServerSideConfig = () => {
 
     customHello: process.env.CUSTOM_HELLO,
     UnauthorizedInfo: process.env.UNAUTHORIZED_INFO,
+    defaultBackupServerAddress: process.env.DEFAULT_BACKUP_SERVER_ADDRESS,
     compressModel: process.env.COMPRESS_MODEL,
     translateModel: process.env.TRANSLATE_MODEL,
     ocrModel: process.env.OCR_MODEL,

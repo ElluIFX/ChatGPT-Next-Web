@@ -123,7 +123,7 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       case model.includes("moonshot"):
         IconComponent = BotIconMoonshot;
         break;
-      case model.includes("qwen"):
+      case model.includes("qwen") || model.includes("qwq"):
         IconComponent = BotIconQwen;
         break;
       case model.includes("runway"):

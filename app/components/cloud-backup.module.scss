@@ -2,259 +2,316 @@
 
 @import "../styles/animation.scss";
 
-.backup-page {
+.container {
+  padding: 20px;
+  position: relative;
   height: 100vh;
+  background-color: var(--gray);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.backup-header {
-  padding: 8px 12px;
+.window {
+  width: 90vw;
+  max-width: 900px;
+  height: 90vh;
   background-color: var(--white);
+  border: var(--border-in-light);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slide-in 0.3s ease;
+}
+
+.window-header {
+  padding: 14px 20px;
   border-bottom: var(--border-in-light);
-  flex-shrink: 0;
-  max-height: 50vh; /* 限制最大高度为视口的50% */
-  overflow-y: auto; /* 当内容过多时允许滚动 */
   position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-  .title {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: var(--black);
+  .window-header-title {
+    max-width: calc(100% - 100px);
+    overflow: hidden;
+
+    .window-header-main-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: var(--black);
+    }
+
+    .window-header-sub-title {
+      font-size: 14px;
+      color: var(--black-50);
+    }
   }
-  .window-action-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-  }
-  .inputGroup {
+
+  .window-actions {
     display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 10px;
   }
+}
 
-  .label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-    font-size: 14px;
-    color: var(--text-color-secondary);
-  }
+.window-content {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+}
 
-  .input {
-    flex: 1;
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+
+  input {
     width: 100%;
-    min-width: 400px;
-    padding: 6px 10px;
+    min-width: 100%;
+    padding: 10px 20px;
     border: var(--border-in-light);
-    border-radius: 5px;
-    font-size: 14px;
-    margin-right: 0.2rem;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-    display: block;
+    border-radius: 8px;
     background-color: var(--white);
     color: var(--black);
+    font-size: 14px;
+    transition: all 0.3s ease;
 
     &:focus {
       border-color: var(--primary);
       outline: none;
+      box-shadow: 0 0 0 2px var(--primary-10);
+      padding-left: 25px;
+      padding-right: 25px;
     }
 
     &:disabled {
-      background-color: var(--button-disabled-bg);
-    }
-  }
-
-  .buttonGroup {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.3rem;
-  }
-
-  .button {
-    flex: 1;
-    padding: 10px 20px;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: var(--white);
-    background-color: var(--primary);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover:not(:disabled) {
-      opacity: 0.8;
-    }
-
-    &:disabled {
-      background-color: var(--button-disabled-bg);
+      background-color: var(--gray);
       cursor: not-allowed;
     }
-  }
 
-  .message {
-    margin-top: 15px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 16px;
-    color: var(--text-color);
+    &:hover:not(:disabled) {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
   }
 }
 
-/* 文件列表样式 */
-.file-list-container {
-  flex: 1;
-  padding: 10px;
-  max-height: 55vh;
-  overflow-y: auto;
-  background-color: var(--background-color-secondary);
+.button-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  width: 100%;
 
-  // 滚动条样式
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #3298eb #f1f1f1; /* Firefox */
-
-  .fileListContainer::-webkit-scrollbar {
-    width: 16px;
+  // 前三个按钮
+  > :nth-child(-n+3) {
+    flex: 1;
+    min-width: 120px;
   }
+}
 
-  .fileListContainer::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 8px;
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+
+  // 让两个按钮平均分配空间
+  > * {
+    flex: 1;
   }
+}
 
-  .fileListContainer::-webkit-scrollbar-thumb {
-    background:  #3298eb;
-    border-radius: 8px;
-  }
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-  .fileListContainer::-webkit-scrollbar-thumb:hover {
-    background: #499ee5;
-  }
+  progress {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
 
-  .subtitle {
-    font-size: 18px;
-    color: var(--black);
-    margin-bottom: 18px;
-    text-align: center;
-  }
-
-  .list {
-    list-style: none;
-    padding-bottom: 20px;
-    margin: 0;
-  }
-
-  .listItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 10px;
-    border: var(--border-in-light);
-    border-radius: 5px;
-    margin-bottom: 8px;
-    background-color: var(--white);
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: var(--hover-color);
+    &::-webkit-progress-bar {
+      background-color: var(--gray);
+      border-radius: 2px;
     }
 
-    .fileInfo {
-      flex: 2;
+    &::-webkit-progress-value {
+      background-color: var(--primary);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  }
+
+  span {
+    font-size: 14px;
+    color: var(--black-50);
+    min-width: 45px;
+  }
+}
+
+.message {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  animation: fade-in 0.3s ease;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+
+  &.info {
+    color: #00a0cc;
+  }
+
+  &.success {
+    color: #00b000;
+  }
+
+  &.error {
+    color: #d32222;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.file-list {
+  border: var(--border-in-light);
+  border-radius: 8px;
+  overflow: hidden;
+
+  .file-list-header {
+    padding: 12px 16px;
+    background-color: var(--gray);
+    font-weight: bold;
+    color: var(--black);
+    font-size: 16px;
+  }
+
+  .file-list-content {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: var(--border-in-light);
+  transition: background-color 0.3s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: var(--gray);
+  }
+
+  .file-info {
+    flex: 1;
+    min-width: 0;
+    margin-right: 20px;
+
+    .file-name {
       font-size: 14px;
-      color: var(--text-color-secondary);
+      color: var(--black);
       word-break: break-all;
     }
 
-    .renameInput {
+    .rename-input {
       width: 100%;
       padding: 6px 10px;
       border: var(--border-in-light);
-      border-radius: 4px;
-      font-size: 13px;
-      box-sizing: border-box;
+      border-radius: 6px;
+      font-size: 14px;
       background-color: var(--white);
       color: var(--black);
-    }
 
-    .fileActions {
-      flex: 3;
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-    }
-
-    .actionButton {
-      padding: 6px 10px;
-      font-size: 13px;
-      color: var(--white);
-      background-color: var(--primary);
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover:not(:disabled) {
-        background-color: var(--primary-hover);
-      }
-
-      &:disabled {
-        background-color: var(--button-disabled-bg);
-        cursor: not-allowed;
+      &:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 2px var(--primary-10);
       }
     }
+  }
+
+  .file-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 }
 
-/* 响应式设计 */
-@media (max-width: 600px) {
-  .backup-header {
-    padding: 15px;
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 0;
+  }
 
-    .title {
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
+  .window {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
 
-    .inputGroup {
-      flex-direction: column;
-      align-items: stretch;
-      margin-bottom: 15px;
-    }
+  .window-header {
+    padding: 10px 15px;
 
-    .input {
-      width: 100%;
-      margin-bottom: 5px;
-    }
-
-    .buttonGroup {
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .button {
-      width: 100%;
+    .window-header-title {
+      .window-header-main-title {
+        font-size: 18px;
+      }
     }
   }
 
-  .file-list-container {
-    padding: 10px;
-    max-height: 60vh; /* 限制列表区域高度，确保文件可以滚动到底部 */
+  .window-content {
+    padding: 15px;
+  }
 
-    .listItem {
-      flex-direction: column;
-      align-items: flex-start;
+  .file-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
 
-      .fileActions {
-        justify-content: flex-start;
-        gap: 4px;
-        margin-top: 8px;
-      }
+    .file-info {
+      margin-right: 0;
     }
+
+    .file-actions {
+      justify-content: flex-end;
+    }
+  }
+
+  .button-container {
+    flex-direction: column;
+
+    // 移动端时取消最小宽度限制
+    > :nth-child(-n+3) {
+      min-width: unset;
+    }
+  }
+
+  .backup-actions {
+    flex-direction: column;
   }
 }

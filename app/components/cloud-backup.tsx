@@ -11,11 +11,13 @@ import {
 import { safeLocalStorage } from "../utils";
 import { getClientConfig } from "../config/client";
 import { IconButton } from "./button";
-import Locale from "../locales";
 import { showConfirm, showToast } from "./ui-lib";
 import { useChatStore } from "../store";
 import { useNavigate } from "react-router-dom";
+import { useMobileScreen } from "../utils";
 import CloseIcon from "../icons/close.svg";
+import DownloadIcon from "../icons/download.svg";
+import UploadIcon from "../icons/upload.svg";
 
 interface FileInfo {
   name: string;
@@ -24,10 +26,13 @@ interface FileInfo {
 
 const localStorage = safeLocalStorage();
 const serverAddressKey = "serverAddress";
+const userNameKey = "userName";
 
 export function CloudBackupPage() {
   const navigate = useNavigate();
+  const isMobileScreen = useMobileScreen();
   const [serverAddress, setServerAddress] = useState("");
+  const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const [backupLoading, setBackupLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
@@ -35,11 +40,7 @@ export function CloudBackupPage() {
     text: string;
     type: "info" | "success" | "error";
   } | null>(null);
-  const messageColors = {
-    info: "blue",
-    success: "green",
-    error: "red",
-  };
+  const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [importingFileNames, setImportingFileNames] = useState<Set<string>>(
@@ -58,8 +59,12 @@ export function CloudBackupPage() {
   useEffect(() => {
     // 从 localStorage 读取文件服务器地址
     const savedAddress = localStorage.getItem(serverAddressKey);
+    const savedUserName = localStorage.getItem(userNameKey);
     if (savedAddress) {
       setServerAddress(savedAddress);
+    }
+    if (savedUserName) {
+      setUserName(savedUserName);
     }
   }, []);
 
@@ -71,9 +76,21 @@ export function CloudBackupPage() {
     }
   };
 
+  const handleUserNameChange = (name: string) => {
+    setUserName(name);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(userNameKey, name); // 保存到 localStorage
+    }
+  };
+
   const handleBackup = async () => {
     if (serverAddress.trim() === "") {
-      setMessage({ text: "文件服务器地址不能为空", type: "error" });
+      setServerAddress(accessStore.defaultBackupServerAddress);
+      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      return;
+    }
+    if (userName.trim() === "") {
+      setMessage({ text: "用户名不能为空", type: "error" });
       return;
     }
     try {
@@ -115,6 +132,7 @@ export function CloudBackupPage() {
     // 设置请求头
     xhr.setRequestHeader("accessCode", accessStore.accessCode);
     xhr.setRequestHeader("collisionString", collisionString);
+    xhr.setRequestHeader("userName", userName);
 
     // 监听上传进度事件
     xhr.upload.onprogress = (event) => {
@@ -157,7 +175,12 @@ export function CloudBackupPage() {
 
   const handleImport = async () => {
     if (serverAddress.trim() === "") {
-      setMessage({ text: "文件服务器地址不能为空", type: "error" });
+      setServerAddress("https://next-backup.hk.ellu.tech");
+      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      return;
+    }
+    if (userName.trim() === "") {
+      setMessage({ text: "用户名不能为空", type: "error" });
       return;
     }
     try {
@@ -174,6 +197,7 @@ export function CloudBackupPage() {
         headers: {
           accessCode: accessStore.accessCode,
           collisionString: collisionString,
+          userName: userName,
         },
       });
       if (!response.ok) {
@@ -217,13 +241,13 @@ export function CloudBackupPage() {
       setMessage({ text: "文件名不能为空", type: "error" });
       return;
     }
-    setRenamingFileNames((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(fileName);
-      return newSet;
-    });
+    if (userName.trim() === "") {
+      setMessage({ text: "用户名不能为空", type: "error" });
+      return;
+    }
     if (serverAddress.trim() === "") {
-      setMessage({ text: "文件服务器地址不能为空", type: "error" });
+      setServerAddress("https://next-backup.hk.ellu.tech");
+      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
     try {
@@ -233,6 +257,11 @@ export function CloudBackupPage() {
       setMessage({ text: "无效的文件服务器地址", type: "error" });
       return;
     }
+    setRenamingFileNames((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(fileName);
+      return newSet;
+    });
     setLoading(true);
     setMessage(null);
     try {
@@ -242,6 +271,7 @@ export function CloudBackupPage() {
           "Content-Type": "application/json",
           accessCode: accessStore.accessCode,
           collisionString: collisionString,
+          userName: userName,
         },
         body: JSON.stringify({ oldName: fileName, newName }),
       });
@@ -275,9 +305,13 @@ export function CloudBackupPage() {
     ) {
       return;
     }
-
+    if (userName.trim() === "") {
+      setMessage({ text: "用户名不能为空", type: "error" });
+      return;
+    }
     if (serverAddress.trim() === "") {
-      setMessage({ text: "文件服务器地址不能为空", type: "error" });
+      setServerAddress("https://next-backup.hk.ellu.tech");
+      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
     try {
@@ -297,6 +331,7 @@ export function CloudBackupPage() {
           headers: {
             accessCode: accessStore.accessCode,
             collisionString: collisionString,
+            userName: userName,
           },
         },
       );
@@ -334,9 +369,13 @@ export function CloudBackupPage() {
     if (!(await showConfirm("确定要删除该文件吗？该操作不可撤回！"))) {
       return;
     }
-
+    if (userName.trim() === "") {
+      setMessage({ text: "用户名不能为空", type: "error" });
+      return;
+    }
     if (serverAddress.trim() === "") {
-      setMessage({ text: "文件服务器地址不能为空", type: "error" });
+      setServerAddress("https://next-backup.hk.ellu.tech");
+      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
     try {
@@ -355,6 +394,7 @@ export function CloudBackupPage() {
           "Content-Type": "application/json",
           accessCode: accessStore.accessCode,
           collisionString: collisionString,
+          userName: userName,
         },
       });
       if (!response.ok) {
@@ -385,9 +425,13 @@ export function CloudBackupPage() {
     ) {
       return;
     }
-
+    if (userName.trim() === "") {
+      setMessage({ text: "用户名不能为空", type: "error" });
+      return;
+    }
     if (serverAddress.trim() === "") {
-      setMessage({ text: "文件服务器地址不能为空", type: "error" });
+      setServerAddress("https://next-backup.hk.ellu.tech");
+      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
     try {
@@ -405,6 +449,7 @@ export function CloudBackupPage() {
         headers: {
           accessCode: accessStore.accessCode,
           collisionString: collisionString,
+          userName: userName,
         },
       });
       if (!response.ok) {
@@ -427,10 +472,6 @@ export function CloudBackupPage() {
       setLoading(false);
     }
   };
-  const clearServerAddress = () => {
-    setServerAddress("");
-    localStorage.removeItem(serverAddressKey); // 从 localStorage 删除
-  };
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 B";
@@ -441,179 +482,191 @@ export function CloudBackupPage() {
     return `${size} ${sizes[i]}`;
   };
 
+  // 处理消息显示和自动隐藏
+  useEffect(() => {
+    if (message) {
+      setIsMessageVisible(true);
+      const timer = setTimeout(() => {
+        setIsMessageVisible(false);
+        setTimeout(() => setMessage(null), 300); // 等待淡出动画完成后再清除消息
+      }, 3000); // 3秒后开始淡出
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   return (
-    <div className={styles["backup-page"]}>
-      <div className={styles["backup-header"]}>
-        <h2 className={styles.title}>云备份管理</h2>
-        <div className={styles["window-action-button"]}>
-          <IconButton
-            icon={<CloseIcon />}
-            bordered
-            onClick={() => navigate(-1)}
-          />
+    <div className={styles.container}>
+      <div className={styles.window}>
+        <div className={styles["window-header"]}>
+          <div className={styles["window-header-title"]}>
+            <div className={styles["window-header-main-title"]}>云备份管理</div>
+            <div className={styles["window-header-sub-title"]}>
+              备份和恢复您的聊天记录
+            </div>
+          </div>
+          <div className={styles["window-actions"]}>
+            <div className={styles["window-action-button"]}>
+              <IconButton
+                icon={<CloseIcon />}
+                onClick={() => navigate(-1)}
+                bordered
+                title="关闭"
+              />
+            </div>
+          </div>
         </div>
-        <div className={styles.inputGroup}>
-          <input
-            type="text"
-            id={serverAddressKey}
-            value={serverAddress}
-            onChange={(e) => handleServerAddressChange(e.target.value)}
-            placeholder="请输入文件服务器地址"
-            disabled={loading}
-            className={styles.input}
-          />
-          <IconButton
-            text={"清除文件服务器地址"}
-            onClick={async () => {
-              clearServerAddress();
-            }}
-            type="primary"
-            style={{
-              marginRight: "10px",
-              marginTop: "5px",
-              marginBottom: "10px",
-            }}
-          />
-          <IconButton
-            text={"清除本地所有对话和设置"}
-            onClick={async () => {
-              if (await showConfirm(Locale.Settings.Danger.Clear.Confirm)) {
-                chatStore.clearAllData();
-              }
-            }}
-            type="danger"
-            style={{
-              marginRight: "10px",
-              marginTop: "5px",
-              marginBottom: "10px",
-            }}
-          />
-          <IconButton
-            text={"清除云端所有对话记录"}
-            onClick={async () => {
-              if (await showConfirm(Locale.Settings.Danger.Clear.Confirm)) {
-                await handleALLFileDelete();
-              }
-            }}
-            type="danger"
-            style={{
-              marginRight: "10px",
-              marginTop: "5px",
-              marginBottom: "10px",
-            }}
-          />
-        </div>
-        <div className={styles.buttonGroup}>
-          <button
-            onClick={handleBackup}
-            disabled={backupLoading}
-            className={styles.button}
-          >
-            {backupLoading ? "上传中..." : "云备份(本地记录上传云端)"}
-            {backupLoading && (
-              <div style={{ margin: "10px 0" }}>
-                <progress
-                  value={uploadProgress}
-                  max="100"
-                  style={{ width: "100%" }}
+
+        <div className={styles["window-content"]}>
+          <div className={styles["settings-container"]}>
+            <div className={styles["input-container"]}>
+              <input
+                type="text"
+                id={serverAddressKey}
+                value={serverAddress}
+                onChange={(e) => handleServerAddressChange(e.target.value)}
+                placeholder={`请输入备份服务器地址 (默认: ${accessStore.defaultBackupServerAddress})`}
+                disabled={loading}
+              />
+              <input
+                type="text"
+                id={userNameKey}
+                value={userName}
+                onChange={(e) => handleUserNameChange(e.target.value)}
+                placeholder="请输入用户名 (您的唯一标识符, 备份和恢复时需要一致)"
+                disabled={loading}
+              />
+              <div className={styles["button-container"]}>
+                <IconButton
+                  text="清除本地所有对话和设置"
+                  onClick={async () => {
+                    if (await showConfirm("确认清除所有聊天、设置数据？")) {
+                      chatStore.clearAllData();
+                    }
+                  }}
+                  type="danger"
                 />
+                <IconButton
+                  text="清除云端所有对话记录"
+                  onClick={async () => {
+                    if (await showConfirm("确认清除所有聊天、设置数据？")) {
+                      await handleALLFileDelete();
+                    }
+                  }}
+                  type="danger"
+                />
+              </div>
+            </div>
+
+            <div className={styles["backup-actions"]}>
+              <IconButton
+                text={backupLoading ? "上传中..." : "备份当前数据到云端"}
+                onClick={handleBackup}
+                disabled={backupLoading}
+                type="primary"
+                icon={<UploadIcon />}
+              />
+              <IconButton
+                text={importLoading ? "加载中..." : "加载云端备份记录"}
+                onClick={handleImport}
+                disabled={importLoading}
+                type="primary"
+                icon={<DownloadIcon />}
+              />
+            </div>
+
+            {backupLoading && (
+              <div className={styles["progress-container"]}>
+                <progress value={uploadProgress} max="100" />
                 <span>{uploadProgress}%</span>
               </div>
             )}
-          </button>
-          <button
-            onClick={handleImport}
-            disabled={importLoading}
-            className={styles.button}
-          >
-            {importLoading ? "加载中..." : "云导入(加载云端记录)"}
-          </button>
-        </div>
-        {message && (
-          <div
-            className={styles.message}
-            style={{
-              color: messageColors[message.type] || "black",
-            }}
-          >
-            {message.text}
+
+            {files.length > 0 && (
+              <div className={styles["file-list"]}>
+                <div className={styles["file-list-header"]}>云端备份列表</div>
+                <div className={styles["file-list-content"]}>
+                  {files
+                    .sort((a, b) => b.name.localeCompare(a.name))
+                    .map((file) => (
+                      <div key={file.name} className={styles["file-item"]}>
+                        <div className={styles["file-info"]}>
+                          {renamingFileNames.has(file.name) ? (
+                            <input
+                              type="text"
+                              value={renameInputs[file.name] || file.name}
+                              onChange={(e) =>
+                                handleRenameChange(file.name, e.target.value)
+                              }
+                              className={styles["rename-input"]}
+                            />
+                          ) : (
+                            <span className={styles["file-name"]}>
+                              {file.name} ({formatFileSize(file.size)})
+                            </span>
+                          )}
+                        </div>
+
+                        <div className={styles["file-actions"]}>
+                          {renamingFileNames.has(file.name) ? (
+                            <>
+                              <IconButton
+                                text="确认"
+                                onClick={() => handleRenameSubmit(file.name)}
+                                disabled={loading}
+                                type="primary"
+                              />
+                              <IconButton
+                                text="取消"
+                                onClick={() => handleCancelRename(file.name)}
+                                disabled={loading}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <IconButton
+                                text="重命名"
+                                onClick={() => handleRename(file.name)}
+                                disabled={loading}
+                                type="primary"
+                              />
+                              <IconButton
+                                text={
+                                  importingFileNames.has(file.name)
+                                    ? "导入中..."
+                                    : "导入"
+                                }
+                                onClick={() => handleFileImport(file.name)}
+                                disabled={
+                                  importingFileNames.has(file.name) || loading
+                                }
+                                type="primary"
+                              />
+                              <IconButton
+                                text="删除"
+                                onClick={() => handleFileDelete(file.name)}
+                                disabled={loading}
+                                type="danger"
+                              />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {message && (
+              <div
+                className={`${styles.message} ${styles[message.type]}`}
+                style={{ opacity: isMessageVisible ? 1 : 0 }}
+              >
+                {message.text}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-
-      {/* 文件列表展示，独立滑动区域 */}
-      {files.length > 0 && (
-        <div className={styles["file-list-container"]}>
-          <h3 className={styles.subtitle}>文件列表</h3>
-          <ul className={styles.list}>
-            {files.map((file) => (
-              <li key={file.name} className={styles.listItem}>
-                {/* 文件名显示或编辑 */}
-                <div className={styles.fileInfo}>
-                  {renamingFileNames.has(file.name) ? (
-                    <input
-                      type="text"
-                      value={renameInputs[file.name] || file.name}
-                      onChange={(e) =>
-                        handleRenameChange(file.name, e.target.value)
-                      }
-                      className={styles.renameInput}
-                    />
-                  ) : (
-                    <span>
-                      {file.name} ({formatFileSize(file.size)})
-                    </span>
-                  )}
-                </div>
-
-                {/* 操作按钮 */}
-                <div className={styles.fileActions}>
-                  {renamingFileNames.has(file.name) ? (
-                    <>
-                      <button
-                        onClick={() => handleRenameSubmit(file.name)}
-                        disabled={loading}
-                        className={styles.actionButton}
-                      >
-                        确认
-                      </button>
-                      <button
-                        onClick={() => handleCancelRename(file.name)}
-                        disabled={loading}
-                        className={styles.actionButton}
-                      >
-                        取消
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => handleRename(file.name)}
-                      disabled={loading}
-                      className={styles.actionButton}
-                    >
-                      重命名
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleFileImport(file.name)}
-                    disabled={importingFileNames.has(file.name) || loading}
-                    className={styles.actionButton}
-                  >
-                    {importingFileNames.has(file.name) ? "导入中..." : "导入"}
-                  </button>
-                  <button
-                    onClick={() => handleFileDelete(file.name)}
-                    disabled={loading}
-                    className={styles.actionButton}
-                  >
-                    删除
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
-      )}
+      </div>
     </div>
   );
 }
