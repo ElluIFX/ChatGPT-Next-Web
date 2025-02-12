@@ -72,7 +72,7 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
     let IconComponent;
     let model = props.model.toLowerCase();
     switch (true) {
-      case model.includes("o1"):
+      case model.includes("o1") || model.includes("o3"):
         IconComponent = BotIconBlack;
         break;
       case model.includes("claude"):
@@ -149,6 +149,8 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       case model.includes("yi"):
         IconComponent = BotIconYi;
         break;
+      case model.includes("temp"): // return empty element
+        return <></>;
       default:
         IconComponent = BotIcon;
     }
