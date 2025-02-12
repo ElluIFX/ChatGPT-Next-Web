@@ -57,12 +57,14 @@ export function ListItem(props: {
   className?: string;
   onClick?: (e: MouseEvent) => void;
   vertical?: boolean;
+  center?: boolean;
 }) {
   return (
     <div
       className={
         styles["list-item"] +
         ` ${props.vertical ? styles["vertical"] : ""} ` +
+        ` ${props.center ? styles["center"] : ""} ` +
         ` ${props.className || ""}`
       }
       onClick={props.onClick}
@@ -534,13 +536,17 @@ export function SearchSelector<T>(props: {
           </div>
           {filteredItems.map((item, i) => {
             const selected = selectedValues.includes(item.value);
+            const icon = (item.value as string).includes("temp") ? undefined : (
+              <Avatar model={item.value as string} />
+            );
             return (
               <ListItem
                 className={`${styles["selector-item"]} ${
                   item.disable && styles["selector-item-disabled"]
                 }`}
                 key={i}
-                icon={<Avatar model={item.value as string} />}
+                icon={icon}
+                center={icon === undefined}
                 title={item.title}
                 subTitle={item.subTitle}
                 onClick={(e) => {

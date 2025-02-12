@@ -149,8 +149,6 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       case model.includes("yi"):
         IconComponent = BotIconYi;
         break;
-      case model.includes("temp"): // return empty element
-        return <></>;
       default:
         IconComponent = BotIcon;
     }
