@@ -85,7 +85,7 @@ export function CloudBackupPage() {
 
   const handleBackup = async () => {
     if (serverAddress.trim() === "") {
-      setServerAddress(accessStore.defaultBackupServerAddress);
+      handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
@@ -175,7 +175,7 @@ export function CloudBackupPage() {
 
   const handleImport = async () => {
     if (serverAddress.trim() === "") {
-      setServerAddress("https://next-backup.hk.ellu.tech");
+      handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
@@ -246,7 +246,7 @@ export function CloudBackupPage() {
       return;
     }
     if (serverAddress.trim() === "") {
-      setServerAddress("https://next-backup.hk.ellu.tech");
+      handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
@@ -310,7 +310,7 @@ export function CloudBackupPage() {
       return;
     }
     if (serverAddress.trim() === "") {
-      setServerAddress("https://next-backup.hk.ellu.tech");
+      handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
@@ -374,7 +374,7 @@ export function CloudBackupPage() {
       return;
     }
     if (serverAddress.trim() === "") {
-      setServerAddress("https://next-backup.hk.ellu.tech");
+      handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
@@ -430,7 +430,7 @@ export function CloudBackupPage() {
       return;
     }
     if (serverAddress.trim() === "") {
-      setServerAddress("https://next-backup.hk.ellu.tech");
+      handleServerAddressChange(accessStore.defaultBackupServerAddress);
       setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
       return;
     }
