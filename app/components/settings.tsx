@@ -18,7 +18,6 @@ import ConfirmIcon from "../icons/confirm.svg";
 import ConnectionIcon from "../icons/connection.svg";
 import CloudSuccessIcon from "../icons/cloud-success.svg";
 import CloudFailIcon from "../icons/cloud-fail.svg";
-
 import {
   Input,
   List,
@@ -475,6 +474,7 @@ function SyncItems() {
   const chatStore = useChatStore();
   const promptStore = usePromptStore();
   const maskStore = useMaskStore();
+  const navigate = useNavigate();
   const couldSync = useMemo(() => {
     return syncStore.cloudSync();
   }, [syncStore]);
@@ -496,6 +496,22 @@ function SyncItems() {
   return (
     <>
       <List>
+        <ListItem
+          title={Locale.CloudBackup.Title}
+          subTitle={Locale.CloudBackup.SubTitle}
+        >
+          <div style={{ display: "flex" }}>
+            <IconButton
+              aria={Locale.CloudBackup.Title}
+              icon={<ConfigIcon />}
+              text={Locale.UI.Config}
+              onClick={() => {
+                navigate(Path.CloudBackup);
+              }}
+            />
+          </div>
+        </ListItem>
+
         <ListItem
           title={Locale.Settings.Sync.CloudState}
           subTitle={

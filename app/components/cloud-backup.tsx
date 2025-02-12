@@ -16,8 +16,7 @@ import { useChatStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { useMobileScreen } from "../utils";
 import CloseIcon from "../icons/close.svg";
-import DownloadIcon from "../icons/download.svg";
-import UploadIcon from "../icons/upload.svg";
+import Locale from "../locales";
 
 interface FileInfo {
   name: string;
@@ -94,18 +93,27 @@ export function CloudBackupPage() {
   const handleBackup = async () => {
     if (serverAddress.trim() === "") {
       handleServerAddressChange(accessStore.defaultBackupServerAddress);
-      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressReset,
+        type: "info",
+      });
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "标识符不能为空", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.UserNameRequired,
+        type: "error",
+      });
       return;
     }
     try {
       const parsedUrl = new URL(serverAddress);
       collisionString = parsedUrl.hostname;
     } catch (error) {
-      setMessage({ text: "无效的文件服务器地址", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressFormatError,
+        type: "error",
+      });
       return;
     }
     setBackupLoading(true);
@@ -129,7 +137,10 @@ export function CloudBackupPage() {
     const fileSize = formatFileSize(jsonBlob.size);
 
     // 显示待上传文件的大小
-    setMessage({ text: `准备上传文件，大小：${fileSize}`, type: "info" });
+    setMessage({
+      text: `${Locale.CloudBackup.Messages.FileTooBig}${fileSize}`,
+      type: "info",
+    });
 
     const formData = new FormData();
     formData.append("file", jsonBlob, fileName);
@@ -155,14 +166,14 @@ export function CloudBackupPage() {
       if (xhr.status >= 200 && xhr.status < 300) {
         const data = JSON.parse(xhr.responseText);
         setMessage({
-          text: data.message || "云备份成功！",
+          text: Locale.CloudBackup.Messages.UploadSuccess,
           type: "success",
         });
         handleImport(true);
       } else {
         const errorData = JSON.parse(xhr.responseText);
         setMessage({
-          text: errorData.message || "备份失败",
+          text: Locale.CloudBackup.Messages.UploadFailed,
           type: "error",
         });
       }
@@ -172,7 +183,7 @@ export function CloudBackupPage() {
     // 监听请求错误
     xhr.onerror = () => {
       setMessage({
-        text: "云备份失败，请重试",
+        text: Locale.CloudBackup.Messages.UploadFailed,
         type: "error",
       });
       setBackupLoading(false);
@@ -185,18 +196,27 @@ export function CloudBackupPage() {
   const handleImport = async (skipSuccessMessage: boolean = false) => {
     if (serverAddress.trim() === "") {
       handleServerAddressChange(accessStore.defaultBackupServerAddress);
-      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressReset,
+        type: "info",
+      });
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "标识符不能为空", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.UserNameRequired,
+        type: "error",
+      });
       return;
     }
     try {
       const parsedUrl = new URL(serverAddress);
       collisionString = parsedUrl.hostname;
     } catch (error) {
-      setMessage({ text: "无效的文件服务器地址", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressFormatError,
+        type: "error",
+      });
       return;
     }
     setImportLoading(true);
@@ -213,17 +233,20 @@ export function CloudBackupPage() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "获取文件列表失败");
+        throw new Error(Locale.CloudBackup.Messages.ListFetchFailed);
       }
       const data: FileInfo[] = await response.json();
       setFiles(data);
       if (!skipSuccessMessage) {
-        setMessage({ text: "文件列表加载成功！", type: "success" });
+        setMessage({
+          text: Locale.CloudBackup.Messages.ListFetchSuccess,
+          type: "success",
+        });
       }
     } catch (error: any) {
       console.error(error);
       setMessage({
-        text: error.message || "获取文件列表失败，请重试",
+        text: Locale.CloudBackup.Messages.ListFetchFailed,
         type: "error",
       });
     } finally {
@@ -290,7 +313,7 @@ export function CloudBackupPage() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "重命名失败");
+        throw new Error("重命名失败");
       }
       const data = await response.json();
       setFiles((prevFiles) =>
@@ -302,7 +325,7 @@ export function CloudBackupPage() {
     } catch (error: any) {
       console.error(error);
       setMessage({
-        text: error.message || "文件重命名失败，请重试",
+        text: "文件重命名失败，请重试",
         type: "error",
       });
     } finally {
@@ -311,27 +334,32 @@ export function CloudBackupPage() {
   };
 
   const handleFileImport = async (fileName: string) => {
-    if (
-      !(await showConfirm(
-        "确定要导入该文件吗？该操作将覆盖本地对话记录，且不可撤回！",
-      ))
-    ) {
+    if (!(await showConfirm(Locale.CloudBackup.Messages.ImportConfirm))) {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "标识符不能为空", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.UserNameRequired,
+        type: "error",
+      });
       return;
     }
     if (serverAddress.trim() === "") {
       handleServerAddressChange(accessStore.defaultBackupServerAddress);
-      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressReset,
+        type: "info",
+      });
       return;
     }
     try {
       const parsedUrl = new URL(serverAddress);
       collisionString = parsedUrl.hostname;
     } catch (error) {
-      setMessage({ text: "无效的文件服务器地址", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressFormatError,
+        type: "error",
+      });
       return;
     }
     setImportingFileNames((prev) => new Set(prev).add(fileName));
@@ -350,7 +378,7 @@ export function CloudBackupPage() {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "文件导入失败");
+        throw new Error(Locale.CloudBackup.Messages.DownloadFailed);
       }
       const data = await response.json();
       const localState = getLocalAppState(); // 获取本地状态
@@ -360,13 +388,13 @@ export function CloudBackupPage() {
       setLocalAppState(localState); // 更新本地状态
 
       setMessage({
-        text: data.message || `文件 ${fileName} 导入成功！`,
+        text: data.message || Locale.CloudBackup.Messages.ImportSuccess,
         type: "success",
       });
     } catch (error: any) {
       console.error(error);
       setMessage({
-        text: error.message || `文件 ${fileName} 导入失败，请重试`,
+        text: Locale.CloudBackup.Messages.DownloadFailed,
         type: "error",
       });
     } finally {
@@ -379,23 +407,32 @@ export function CloudBackupPage() {
   };
 
   const handleFileDelete = async (fileName: string) => {
-    if (!(await showConfirm("确定要删除该文件吗？该操作不可撤回！"))) {
+    if (!(await showConfirm(Locale.CloudBackup.Messages.DeleteConfirm))) {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "标识符不能为空", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.UserNameRequired,
+        type: "error",
+      });
       return;
     }
     if (serverAddress.trim() === "") {
       handleServerAddressChange(accessStore.defaultBackupServerAddress);
-      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressReset,
+        type: "info",
+      });
       return;
     }
     try {
       const parsedUrl = new URL(serverAddress);
       collisionString = parsedUrl.hostname;
     } catch (error) {
-      setMessage({ text: "无效的文件服务器地址", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressFormatError,
+        type: "error",
+      });
       return;
     }
     setLoading(true);
@@ -412,46 +449,54 @@ export function CloudBackupPage() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "文件删除失败");
+        throw new Error(Locale.CloudBackup.Messages.DeleteFailed);
       }
       const data = await response.json();
       setFiles((prevFiles) =>
         prevFiles.filter((file) => file.name !== fileName),
       );
       setMessage({
-        text: data.message || `文件 ${fileName} 删除成功！`,
+        text: data.message || Locale.CloudBackup.Messages.DeleteSuccess,
         type: "success",
       });
     } catch (error: any) {
       console.error(error);
       setMessage({
-        text: error.message || `文件 ${fileName} 删除失败，请重试`,
+        text: Locale.CloudBackup.Messages.DeleteFailed,
         type: "error",
       });
     } finally {
       setLoading(false);
     }
   };
+
   const handleALLFileDelete = async () => {
-    if (
-      !(await showConfirm("确定要删除云端所有对话记录吗？该操作不可撤回！"))
-    ) {
+    if (!(await showConfirm(Locale.CloudBackup.Messages.DeleteAllConfirm))) {
       return;
     }
     if (userName.trim() === "") {
-      setMessage({ text: "标识符不能为空", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.UserNameRequired,
+        type: "error",
+      });
       return;
     }
     if (serverAddress.trim() === "") {
       handleServerAddressChange(accessStore.defaultBackupServerAddress);
-      setMessage({ text: "备份服务器地址已重置为默认值", type: "info" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressReset,
+        type: "info",
+      });
       return;
     }
     try {
       const parsedUrl = new URL(serverAddress);
       collisionString = parsedUrl.hostname;
     } catch (error) {
-      setMessage({ text: "无效的文件服务器地址", type: "error" });
+      setMessage({
+        text: Locale.CloudBackup.Messages.ServerAddressFormatError,
+        type: "error",
+      });
       return;
     }
     setLoading(true);
@@ -467,18 +512,18 @@ export function CloudBackupPage() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "文件删除失败");
+        throw new Error(Locale.CloudBackup.Messages.DeleteFailed);
       }
       const data = await response.json();
       setFiles([]);
       setMessage({
-        text: data.message || `所有云端对话记录已成功清除！`,
+        text: data.message || Locale.CloudBackup.Messages.DeleteAllSuccess,
         type: "success",
       });
     } catch (error: any) {
       console.error(error);
       setMessage({
-        text: error.message || `云端对话记录已成功清除删除失败，请重试`,
+        text: Locale.CloudBackup.Messages.DeleteFailed,
         type: "error",
       });
     } finally {
@@ -500,9 +545,11 @@ export function CloudBackupPage() {
       <div className={styles.window}>
         <div className={styles["window-header"]}>
           <div className={styles["window-header-title"]}>
-            <div className={styles["window-header-main-title"]}>云备份管理</div>
+            <div className={styles["window-header-main-title"]}>
+              {Locale.CloudBackup.Title}
+            </div>
             <div className={styles["window-header-sub-title"]}>
-              在不同设备上备份和恢复您的聊天记录
+              {Locale.CloudBackup.SubTitle}
             </div>
           </div>
           <div className={styles["window-actions"]}>
@@ -511,7 +558,7 @@ export function CloudBackupPage() {
                 icon={<CloseIcon />}
                 onClick={() => navigate(-1)}
                 bordered
-                title="关闭"
+                title={Locale.UI.Close}
               />
             </div>
           </div>
@@ -525,7 +572,7 @@ export function CloudBackupPage() {
                 id={serverAddressKey}
                 value={serverAddress}
                 onChange={(e) => handleServerAddressChange(e.target.value)}
-                placeholder={`请输入备份服务器地址 (默认: ${accessStore.defaultBackupServerAddress})`}
+                placeholder={`${Locale.CloudBackup.Placeholders.ServerAddress}${accessStore.defaultBackupServerAddress})`}
                 disabled={loading}
               />
               <input
@@ -533,25 +580,33 @@ export function CloudBackupPage() {
                 id={userNameKey}
                 value={userName}
                 onChange={(e) => handleUserNameChange(e.target.value)}
-                placeholder="请输入您的用户标识符 (第一次使用请生成)"
+                placeholder={Locale.CloudBackup.Placeholders.UserName}
                 disabled={loading}
               />
             </div>
 
             <div className={styles["button-container"]}>
               <IconButton
-                text="清除本地所有对话和设置"
+                text={Locale.CloudBackup.Actions.DeleteLocal}
                 onClick={async () => {
-                  if (await showConfirm("确认清除所有聊天、设置数据？")) {
+                  if (
+                    await showConfirm(
+                      Locale.CloudBackup.Messages.ClearLocalConfirm,
+                    )
+                  ) {
                     chatStore.clearAllData();
                   }
                 }}
                 type="danger"
               />
               <IconButton
-                text="清除云端所有对话记录"
+                text={Locale.CloudBackup.Actions.DeleteAll}
                 onClick={async () => {
-                  if (await showConfirm("确认清除所有聊天、设置数据？")) {
+                  if (
+                    await showConfirm(
+                      Locale.CloudBackup.Messages.DeleteAllConfirm,
+                    )
+                  ) {
                     await handleALLFileDelete();
                     setFiles([]);
                   }
@@ -559,17 +614,17 @@ export function CloudBackupPage() {
                 type="danger"
               />
               <IconButton
-                text="生成新的标识符"
+                text={Locale.CloudBackup.Actions.GenerateNewId}
                 onClick={async () => {
                   if (
                     userName.trim() === "" ||
                     (await showConfirm(
-                      "确认生成新的标识符？(将覆盖当前标识符, 请先备份)",
+                      Locale.CloudBackup.Messages.NewIdConfirm,
                     ))
                   ) {
                     handleUserNameChange(generateUUID());
                     setMessage({
-                      text: "您的标识符已生成，请妥善保管",
+                      text: Locale.CloudBackup.Messages.NewIdSuccess,
                       type: "info",
                     });
                     setFiles([]);
@@ -581,18 +636,24 @@ export function CloudBackupPage() {
 
             <div className={styles["backup-actions"]}>
               <IconButton
-                text={backupLoading ? "上传中..." : "备份当前数据到云端"}
+                text={
+                  backupLoading
+                    ? Locale.CloudBackup.Actions.UploadingStatus
+                    : Locale.CloudBackup.Actions.Upload
+                }
                 onClick={handleBackup}
                 disabled={backupLoading}
                 type="primary"
-                icon={<UploadIcon />}
               />
               <IconButton
-                text={importLoading ? "加载中..." : "加载云端备份记录"}
+                text={
+                  importLoading
+                    ? Locale.CloudBackup.Actions.DownloadingStatus
+                    : Locale.CloudBackup.Actions.Download
+                }
                 onClick={() => handleImport(false)}
                 disabled={importLoading}
                 type="primary"
-                icon={<DownloadIcon />}
               />
             </div>
 
@@ -611,7 +672,9 @@ export function CloudBackupPage() {
 
             {files.length > 0 && (
               <div className={styles["file-list"]}>
-                <div className={styles["file-list-header"]}>云端备份列表</div>
+                <div className={styles["file-list-header"]}>
+                  {Locale.CloudBackup.CloudList.Title}
+                </div>
                 <div className={styles["file-list-content"]}>
                   {files
                     .sort((a, b) => b.name.localeCompare(a.name))
@@ -638,13 +701,15 @@ export function CloudBackupPage() {
                           {renamingFileNames.has(file.name) ? (
                             <>
                               <IconButton
-                                text="确认"
+                                text={
+                                  Locale.CloudBackup.CloudList.RenameConfirm
+                                }
                                 onClick={() => handleRenameSubmit(file.name)}
                                 disabled={loading}
                                 type="primary"
                               />
                               <IconButton
-                                text="取消"
+                                text={Locale.CloudBackup.CloudList.RenameCancel}
                                 onClick={() => handleCancelRename(file.name)}
                                 disabled={loading}
                               />
@@ -652,7 +717,7 @@ export function CloudBackupPage() {
                           ) : (
                             <>
                               <IconButton
-                                text="重命名"
+                                text={Locale.CloudBackup.CloudList.RenameTitle}
                                 onClick={() => handleRename(file.name)}
                                 disabled={loading}
                                 type="primary"
@@ -660,8 +725,9 @@ export function CloudBackupPage() {
                               <IconButton
                                 text={
                                   importingFileNames.has(file.name)
-                                    ? "导入中..."
-                                    : "导入"
+                                    ? Locale.CloudBackup.Actions
+                                        .DownloadingStatus
+                                    : Locale.CloudBackup.CloudList.ImportTitle
                                 }
                                 onClick={() => handleFileImport(file.name)}
                                 disabled={
@@ -670,7 +736,7 @@ export function CloudBackupPage() {
                                 type="primary"
                               />
                               <IconButton
-                                text="删除"
+                                text={Locale.CloudBackup.CloudList.DeleteTitle}
                                 onClick={() => handleFileDelete(file.name)}
                                 disabled={loading}
                                 type="danger"

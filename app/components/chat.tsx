@@ -42,8 +42,6 @@ import BottomIcon from "../icons/bottom.svg";
 import StopIcon from "../icons/pause.svg";
 import RobotIcon from "../icons/robot.svg";
 
-import FileExpressIcon from "../icons/cloud.svg";
-import SearchChatIcon from "../icons/zoom.svg";
 import ShortcutkeyIcon from "../icons/shortcutkey.svg";
 import ReloadIcon from "../icons/reload.svg";
 import TranslateIcon from "../icons/translate.svg";
@@ -789,6 +787,14 @@ export function ChatActions(props: {
           />
         )}
 
+        {!isMobileScreen && (
+          <ChatAction
+            onClick={() => props.setShowShortcutKeyModal(true)}
+            text={Locale.Chat.ShortcutKey.Title}
+            icon={<ShortcutkeyIcon />}
+          />
+        )}
+
         {showUploadImage && (
           <ChatAction
             onClick={props.uploadImage}
@@ -882,32 +888,6 @@ export function ChatActions(props: {
       </div>
 
       <div>
-        {!isMobileScreen && (
-          <ChatAction
-            onClick={() => props.setShowShortcutKeyModal(true)}
-            text={Locale.Chat.ShortcutKey.Title}
-            icon={<ShortcutkeyIcon />}
-          />
-        )}
-
-        {!isMobileScreen && (
-          <ChatAction
-            onClick={() => {
-              navigate(Path.SearchChat);
-            }}
-            text={Locale.SearchChat.Page.Title}
-            icon={<SearchChatIcon />}
-          />
-        )}
-
-        <ChatAction
-          onClick={() => {
-            navigate(Path.CloudBackup);
-          }}
-          text={Locale.Chat.InputActions.CloudBackup}
-          icon={<FileExpressIcon />}
-        />
-
         <ChatAction
           onClick={handleTranslate}
           text={

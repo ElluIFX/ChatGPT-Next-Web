@@ -11,6 +11,8 @@ import DeleteIcon from "../icons/delete.svg";
 import MaskIcon from "../icons/mask.svg";
 import DragIcon from "../icons/drag.svg";
 import DiscoveryIcon from "../icons/discovery.svg";
+import CloudIcon from "../icons/cloud.svg";
+import SearchIcon from "../icons/zoom.svg";
 import parse from "html-react-parser";
 
 import Locale from "../locales";
@@ -261,7 +263,8 @@ export function SideBar(props: { className?: string }) {
             shadow
           />
           <IconButton
-            icon={<DiscoveryIcon />}
+            // icon={<DiscoveryIcon />}
+            icon={<SearchIcon />}
             text={shouldNarrow ? undefined : Locale.Discovery.Name}
             className={styles["sidebar-bar-button"]}
             // onClick={() => setShowPluginSelector(true)}
@@ -320,6 +323,15 @@ export function SideBar(props: { className?: string }) {
                 <IconButton
                   aria={Locale.Settings.Title}
                   icon={<SettingsIcon />}
+                  shadow
+                />
+              </Link>
+            </div>
+            <div className={styles["sidebar-action"]}>
+              <Link to={Path.CloudBackup}>
+                <IconButton
+                  aria={Locale.CloudBackup.Title}
+                  icon={<CloudIcon />}
                   shadow
                 />
               </Link>

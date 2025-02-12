@@ -645,6 +645,62 @@ const en: LocaleType = {
     Time: "Time",
   },
 
+  CloudBackup: {
+    Title: "Cloud Backup Management",
+    SubTitle: "Backup and restore your chat history across different devices",
+    Actions: {
+      Upload: "Backup Current Data to Cloud",
+      Download: "Load Cloud Backup Records",
+      UploadingStatus: "Uploading...",
+      DownloadingStatus: "Loading...",
+      DeleteAll: "Clear All Cloud Chat Records",
+      DeleteLocal: "Clear All Local Chats and Settings",
+      GenerateNewId: "Generate New Identifier",
+    },
+    Messages: {
+      ServerAddressRequired: "Backup server address cannot be empty",
+      ServerAddressFormatError: "Invalid file server address",
+      ServerAddressReset: "Backup server address has been reset to default",
+      UserNameRequired: "Identifier cannot be empty",
+      FileTooBig: "Preparing to upload file, size: ",
+      UploadSuccess: "Cloud backup successful!",
+      UploadFailed:
+        "Backup failed, please check the backup server address and authorization code",
+      ListFetchFailed:
+        "Failed to fetch cloud backup list, please check the backup server address and authorization code",
+      ListFetchSuccess: "Cloud backup list fetched successfully",
+      DownloadFailed: "File import failed",
+      DeleteConfirm:
+        "Are you sure you want to delete this file? This action cannot be undone!",
+      DeleteAllConfirm:
+        "Are you sure you want to delete all cloud chat records? This action cannot be undone!",
+      DeleteSuccess: "File deleted successfully!",
+      DeleteAllSuccess:
+        "All cloud chat records have been cleared successfully!",
+      DeleteFailed: "File deletion failed, please try again",
+      ClearLocalConfirm: "Confirm to clear all chats and settings data?",
+      ClearCloudConfirm: "Confirm to clear all chats and settings data?",
+      ImportConfirm:
+        "Are you sure you want to import this file? This will overwrite local chat records and cannot be undone!",
+      ImportSuccess: "File imported successfully!",
+      NewIdConfirm:
+        "Confirm to generate new identifier? (Will override current identifier, please backup first)",
+      NewIdSuccess: "Your identifier has been generated, please keep it safe",
+    },
+    Placeholders: {
+      ServerAddress: "Enter backup server address (default: ",
+      UserName: "Enter your user identifier (generate for first use)",
+    },
+    CloudList: {
+      Title: "Cloud Backup List",
+      RenameTitle: "Rename",
+      RenameConfirm: "Confirm",
+      RenameCancel: "Cancel",
+      ImportTitle: "Import",
+      DeleteTitle: "Delete",
+    },
+  },
+
   URLCommand: {
     Code: "Detected access code from url, confirm to apply? ",
     Settings: "Detected settings from url, confirm to apply?",

@@ -1,9 +1,8 @@
 import path from "path";
 
-export const OWNER = "QAbot-zh";
+export const OWNER = "ElluIFX";
 export const REPO = "ChatGPT-Next-Web";
-export const FAKE_OPENAI_URL = "https://new.oaifree.com";
-export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
+export const REPO_URL = `https://github.com/${OWNER}`;
 export const ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues`;
 export const UPDATE_URL = `${REPO_URL}#keep-updated`;
 export const RELEASE_URL = `${REPO_URL}/releases`;
@@ -128,7 +127,7 @@ You are ChatGPT, a large language model trained by {{ServiceProvider}}.
 Knowledge cutoff: {{cutoff}}
 Current model: {{model}}
 Current time: {{time}}
-Latex inline: \\(x^2\\) 
+Latex inline: \\(x^2\\)
 Latex block: $$e=mc^2$$
 `;
 
