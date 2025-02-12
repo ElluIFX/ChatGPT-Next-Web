@@ -814,11 +814,13 @@ export function ChatActions(props: {
           />
         )}
 
-        <ChatAction
-          onClick={props.showPromptHints}
-          text={Locale.Chat.InputActions.Prompt}
-          icon={<PromptIcon />}
-        />
+        {!isMobileScreen && (
+          <ChatAction
+            onClick={props.showPromptHints}
+            text={Locale.Chat.InputActions.Prompt}
+            icon={<PromptIcon />}
+          />
+        )}
 
         {!isMobileScreen && (
           <ChatAction
@@ -878,6 +880,7 @@ export function ChatActions(props: {
           />
         )}
       </div>
+
       <div>
         {!isMobileScreen && (
           <ChatAction
@@ -886,6 +889,7 @@ export function ChatActions(props: {
             icon={<ShortcutkeyIcon />}
           />
         )}
+
         {!isMobileScreen && (
           <ChatAction
             onClick={() => {
@@ -895,13 +899,17 @@ export function ChatActions(props: {
             icon={<SearchChatIcon />}
           />
         )}
-        <ChatAction
-          onClick={() => {
-            navigate(Path.CloudBackup);
-          }}
-          text={Locale.Chat.InputActions.CloudBackup}
-          icon={<FileExpressIcon />}
-        />
+
+        {!isMobileScreen && (
+          <ChatAction
+            onClick={() => {
+              navigate(Path.CloudBackup);
+            }}
+            text={Locale.Chat.InputActions.CloudBackup}
+            icon={<FileExpressIcon />}
+          />
+        )}
+
         <ChatAction
           onClick={handleTranslate}
           text={
@@ -912,28 +920,30 @@ export function ChatActions(props: {
           alwaysShowText={isTranslating}
           icon={<TranslateIcon />}
         />
+
+        <ChatAction
+          onClick={handleOCR}
+          text={
+            isOCRing
+              ? Locale.Chat.InputActions.OCR.isDetectingToast
+              : Locale.Chat.InputActions.OCR.Title
+          }
+          alwaysShowText={isOCRing}
+          icon={<OcrIcon />}
+        />
+
         {!isMobileScreen && (
           <ChatAction
-            onClick={handleOCR}
+            onClick={handlePrivacy}
             text={
-              isOCRing
-                ? Locale.Chat.InputActions.OCR.isDetectingToast
-                : Locale.Chat.InputActions.OCR.Title
+              isPrivacying
+                ? Locale.Chat.InputActions.Privacy.isPrivacyToast
+                : Locale.Chat.InputActions.Privacy.Title
             }
-            alwaysShowText={isOCRing}
-            icon={<OcrIcon />}
+            alwaysShowText={isPrivacying}
+            icon={<PrivacyIcon />}
           />
         )}
-        <ChatAction
-          onClick={handlePrivacy}
-          text={
-            isPrivacying
-              ? Locale.Chat.InputActions.Privacy.isPrivacyToast
-              : Locale.Chat.InputActions.Privacy.Title
-          }
-          alwaysShowText={isPrivacying}
-          icon={<PrivacyIcon />}
-        />
       </div>
     </div>
   );
