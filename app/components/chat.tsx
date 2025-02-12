@@ -1106,6 +1106,8 @@ function ChatInputActions(props: {
     config,
     i,
   } = props;
+  const chatStore = useChatStore();
+  const session = chatStore.currentSession();
 
   return (
     <div className={styles["chat-input-actions"]}>
@@ -1151,6 +1153,38 @@ function ChatInputActions(props: {
             />
           )}
           <ChatAction
+            text={Locale.Chat.Actions.Edit}
+            icon={<EditIcon />}
+            onClick={async () => {
+              const newMessage = await showPrompt(
+                Locale.Chat.Actions.Edit,
+                getMessageTextContent(message),
+                10,
+              );
+              let newContent: string | MultimodalContent[] = newMessage;
+              const images = getMessageImages(message);
+              if (images.length > 0) {
+                newContent = [{ type: "text", text: newMessage }];
+                for (let i = 0; i < images.length; i++) {
+                  newContent.push({
+                    type: "image_url",
+                    image_url: {
+                      url: images[i],
+                    },
+                  });
+                }
+              }
+              chatStore.updateTargetSession(session, (session) => {
+                const m = session.mask.context
+                  .concat(session.messages)
+                  .find((m) => m.id === message.id);
+                if (m) {
+                  m.content = newContent;
+                }
+              });
+            }}
+          />
+          <ChatAction
             text={Locale.Chat.Actions.EditToInput}
             icon={<EditToInputIcon />}
             onClick={() => setUserInput(getMessageTextContent(message))}
@@ -1160,6 +1194,7 @@ function ChatInputActions(props: {
     </div>
   );
 }
+
 function _Chat() {
   type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -2018,44 +2053,6 @@ function _Chat() {
                 <div className={styles["chat-message-container"]}>
                   <div className={styles["chat-message-header"]}>
                     <div className={styles["chat-message-avatar"]}>
-                      <div className={styles["chat-message-edit"]}>
-                        <IconButton
-                          icon={<EditIcon />}
-                          aria={Locale.Chat.Actions.Edit}
-                          onClick={async () => {
-                            const newMessage = await showPrompt(
-                              Locale.Chat.Actions.Edit,
-                              getMessageTextContent(message),
-                              10,
-                            );
-                            let newContent: string | MultimodalContent[] =
-                              newMessage;
-                            const images = getMessageImages(message);
-                            if (images.length > 0) {
-                              newContent = [{ type: "text", text: newMessage }];
-                              for (let i = 0; i < images.length; i++) {
-                                newContent.push({
-                                  type: "image_url",
-                                  image_url: {
-                                    url: images[i],
-                                  },
-                                });
-                              }
-                            }
-                            chatStore.updateTargetSession(
-                              session,
-                              (session) => {
-                                const m = session.mask.context
-                                  .concat(session.messages)
-                                  .find((m) => m.id === message.id);
-                                if (m) {
-                                  m.content = newContent;
-                                }
-                              },
-                            );
-                          }}
-                        ></IconButton>
-                      </div>
                       {isUser ? (
                         <Avatar avatar={config.avatar} />
                       ) : (
@@ -2079,7 +2076,7 @@ function _Chat() {
                       </div>
                     )}
 
-                    {!isMobileScreen && showActions && (
+                    {/* {!isMobileScreen && showActions && (
                       <div className={styles["chat-message-actions"]}>
                         <div className={styles["chat-input-actions"]}>
                           <ChatInputActions
@@ -2097,7 +2094,7 @@ function _Chat() {
                           />
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                   {showTyping && (
                     <div className={styles["chat-message-status"]}>
