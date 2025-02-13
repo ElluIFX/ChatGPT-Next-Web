@@ -667,7 +667,7 @@ const en: LocaleType = {
       UploadFailed:
         "Backup failed, please check the backup server address and authorization code",
       ListFetchFailed:
-        "Failed to fetch cloud backup list, no backup file found",
+        "Failed to fetch cloud backup list, please check the backup server address and authorization code",
       ListFetchSuccess: "Cloud backup list fetched successfully",
       DownloadFailed: "File import failed",
       DeleteConfirm:

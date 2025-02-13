@@ -657,7 +657,7 @@ const cn = {
       FileTooBig: "准备上传文件，大小：",
       UploadSuccess: "云备份成功！",
       UploadFailed: "备份失败，请检查备份服务器地址和授权码",
-      ListFetchFailed: "获取云端备份列表失败，未找到备份文件",
+      ListFetchFailed: "获取云端备份列表失败，请检查备份服务器地址和授权码",
       ListFetchSuccess: "云端备份列表获取成功",
       DownloadFailed: "文件导入失败",
       DeleteConfirm: "确定要删除该文件吗？该操作不可撤回！",
