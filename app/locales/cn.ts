@@ -672,9 +672,10 @@ const cn = {
       ImportSuccess: "文件导入成功！",
       NewIdConfirm: "确认生成新的标识符？(将覆盖当前标识符, 请先备份)",
       NewIdSuccess: "您的标识符已生成，请妥善保管",
+      NoFiles: "没有找到备份文件",
     },
     Placeholders: {
-      ServerAddress: "请输入备份服务器地址 (默认: ",
+      ServerAddress: "请输入备份服务器地址 (留空使用默认值)",
       UserName: "请输入您的用户标识符 (第一次使用请生成)",
     },
     CloudList: {

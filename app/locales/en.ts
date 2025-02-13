@@ -686,9 +686,10 @@ const en: LocaleType = {
       NewIdConfirm:
         "Confirm to generate new identifier? (Will override current identifier, please backup first)",
       NewIdSuccess: "Your identifier has been generated, please keep it safe",
+      NoFiles: "No backup files found",
     },
     Placeholders: {
-      ServerAddress: "Enter backup server address (default: ",
+      ServerAddress: "Enter backup server address (leave blank for default)",
       UserName: "Enter your user identifier (generate for first use)",
     },
     CloudList: {

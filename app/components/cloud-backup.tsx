@@ -220,6 +220,7 @@ export function CloudBackupPage() {
       return;
     }
     setImportLoading(true);
+    setFiles([]);
     if (!skipSuccessMessage) {
       setMessage(null);
     }
@@ -572,7 +573,7 @@ export function CloudBackupPage() {
                 id={serverAddressKey}
                 value={serverAddress}
                 onChange={(e) => handleServerAddressChange(e.target.value)}
-                placeholder={`${Locale.CloudBackup.Placeholders.ServerAddress}${accessStore.defaultBackupServerAddress})`}
+                placeholder={Locale.CloudBackup.Placeholders.ServerAddress}
                 disabled={loading}
               />
               <input
@@ -667,6 +668,19 @@ export function CloudBackupPage() {
             {message && (
               <div className={`${styles.message} ${styles[message.type]}`}>
                 {message.text}
+              </div>
+            )}
+
+            {files.length === 0 && (
+              <div className={styles["file-list"]}>
+                <div className={styles["file-list-header"]}>
+                  {Locale.CloudBackup.CloudList.Title}
+                </div>
+                <div className={styles["file-list-content"]}>
+                  <div className={styles["file-item-center-text"]}>
+                    {Locale.CloudBackup.Messages.NoFiles}
+                  </div>
+                </div>
               </div>
             )}
 
