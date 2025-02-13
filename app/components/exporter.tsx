@@ -413,8 +413,14 @@ export function PreviewActions(props: {
   );
 }
 
-function ExportAvatar(props: { avatar: string }) {
-  if (props.avatar === DEFAULT_MASK_AVATAR) {
+interface ExportAvatarProps {
+  avatar?: string;
+  model?: string;
+}
+function ExportAvatar(props: ExportAvatarProps) {
+  const { avatar, model } = props;
+
+  if (!model && avatar && avatar === DEFAULT_MASK_AVATAR) {
     return (
       <img
         src={BotIcon.src}
@@ -425,8 +431,7 @@ function ExportAvatar(props: { avatar: string }) {
       />
     );
   }
-
-  return <Avatar avatar={props.avatar} />;
+  return <Avatar model={model} avatar={avatar} />;
 }
 
 export function ImagePreviewer(props: {
@@ -554,7 +559,7 @@ export function ImagePreviewer(props: {
             <div className={styles["icons"]}>
               <ExportAvatar avatar={config.avatar} />
               <span className={styles["icon-space"]}>&</span>
-              <ExportAvatar avatar={mask.avatar} />
+              <ExportAvatar model={mask.modelConfig.model} />
             </div>
           </div>
           <div>
@@ -584,6 +589,7 @@ export function ImagePreviewer(props: {
               <div className={styles["avatar"]}>
                 <ExportAvatar
                   avatar={m.role === "user" ? config.avatar : mask.avatar}
+                  model={m.role === "user" ? undefined : m.model}
                 />
               </div>
 
@@ -639,9 +645,7 @@ export function MarkdownPreviewer(props: {
       .map((m) => {
         return m.role === "user"
           ? `## ${Locale.Export.MessageFromYou}:\n${getMessageTextContent(m)}`
-          : `## ${Locale.Export.MessageFromChatGPT}:\n${getMessageTextContent(
-              m,
-            ).trim()}`;
+          : `## ${m.model}:\n${getMessageTextContent(m).trim()}`;
       })
       .join("\n\n");
 
