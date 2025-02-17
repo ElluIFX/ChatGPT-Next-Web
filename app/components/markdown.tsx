@@ -113,13 +113,40 @@ const ThinkCollapse = styled(
 // 配置安全策略，允许 thinkcollapse 标签，防止html注入造成页面崩溃
 const sanitizeOptions = {
   ...defaultSchema,
-  tagNames: [...(defaultSchema.tagNames || []), "thinkcollapse"],
   attributes: {
     ...defaultSchema.attributes,
-    thinkcollapse: ["title", "className"],
-    pre: ["className"],
-    code: ["className"],
+    div: [
+      ...(defaultSchema.attributes?.div || []),
+      ["className", "math", "math-display"],
+    ],
+    math: [["xmlns", "http://www.w3.org/1998/Math/MathML"], "display"],
+    annotation: ["encoding"],
+    span: ["className", "style"],
+    svg: [
+      ["xmlns", "http://www.w3.org/2000/svg"],
+      "width",
+      "height",
+      "viewBox",
+      "preserveAspectRatio",
+    ],
+    path: ["d"],
   },
+  tagNames: [
+    ...(defaultSchema.tagNames || []),
+    "thinkcollapse",
+    "math",
+    "semantics",
+    "annotation",
+    "mrow",
+    "mi",
+    "mo",
+    "mfrac",
+    "mn",
+    "msup",
+    "msub",
+    "svg",
+    "path",
+  ],
 };
 
 function Details(props: { children: React.ReactNode }) {
@@ -507,8 +534,8 @@ function R_MarkDownContent(props: { content: string; fontSize?: number }) {
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       rehypePlugins={[
         RehypeRaw,
-        [rehypeSanitize, sanitizeOptions],
         RehypeKatex,
+        [rehypeSanitize, sanitizeOptions],
         [
           RehypeHighlight,
           {
