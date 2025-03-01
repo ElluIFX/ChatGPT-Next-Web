@@ -289,8 +289,14 @@ export class ChatGPTApi implements LLMApi {
     }
 
     console.log("[Request] openai payload: ", requestPayload);
+    // Add more detailed request logging
+    console.log("[OpenAI Client] Request URL:", this.path(OpenaiPath.ChatPath));
+    console.log(
+      "[OpenAI Client] Request Headers:",
+      JSON.stringify(getHeaders(), null, 2),
+    );
 
-    const shouldStream = !!options.config.stream; // && !isO1; // o1 已经开始支持流式
+    const shouldStream = !!options.config.stream;
     const controller = new AbortController();
     options.onController?.(controller);
 
@@ -319,7 +325,10 @@ export class ChatGPTApi implements LLMApi {
         function animateResponseText() {
           if (finished || controller.signal.aborted) {
             responseText += remainText;
-            console.log("[Response Animation] finished");
+            console.log(
+              "[OpenAI Client] Stream finished, total response length:",
+              responseText.length,
+            );
             if (responseText?.length === 0) {
               options.onError?.(new Error("empty response from server"));
             }
@@ -357,13 +366,23 @@ export class ChatGPTApi implements LLMApi {
           async onopen(res) {
             clearTimeout(requestTimeoutId);
             const contentType = res.headers.get("content-type");
+            console.log("[OpenAI Client] Response content type:", contentType);
+            console.log("[OpenAI Client] Response status:", res.status);
             console.log(
-              "[OpenAI] request response content type: ",
-              contentType,
+              "[OpenAI Client] Response headers:",
+              JSON.stringify(
+                Object.fromEntries(res.headers.entries()),
+                null,
+                2,
+              ),
             );
 
             if (contentType?.startsWith("text/plain")) {
               responseText = await res.clone().text();
+              console.log(
+                "[OpenAI Client] Received plain text response:",
+                responseText,
+              );
               return finish();
             }
 
@@ -396,11 +415,16 @@ export class ChatGPTApi implements LLMApi {
           },
           onmessage(msg) {
             if (msg.data === "[DONE]" || finished) {
+              console.log("[OpenAI Client] Stream message complete");
               return finish();
             }
             const text = msg.data;
             try {
               const json = JSON.parse(text);
+              console.log(
+                "[OpenAI Client] Stream message:",
+                JSON.stringify(json, null, 2),
+              );
               const choices = json.choices as Array<{
                 delta: {
                   content: string | null;

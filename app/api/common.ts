@@ -135,8 +135,24 @@ export async function requestOpenai(req: NextRequest) {
   }
 
   try {
-    console.log("[Fetch Url]", fetchUrl);
+    console.log("[OpenAI Request] Sending request to:", fetchUrl);
     const res = await fetch(fetchUrl, fetchOptions);
+
+    // Log response details
+    console.log("[OpenAI Response] Status:", res.status);
+    console.log(
+      "[OpenAI Response] Headers:",
+      JSON.stringify(Object.fromEntries(res.headers.entries()), null, 2),
+    );
+
+    if (!res.ok) {
+      try {
+        const errorBody = await res.clone().text();
+        console.error("[OpenAI Response] Error body:", errorBody);
+      } catch (e) {
+        console.error("[OpenAI Response] Failed to log error response:", e);
+      }
+    }
 
     // Extract the OpenAI-Organization header from the response
     const openaiOrganizationHeader = res.headers.get("OpenAI-Organization");
