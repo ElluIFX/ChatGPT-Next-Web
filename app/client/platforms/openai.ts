@@ -158,8 +158,13 @@ export class ChatGPTApi implements LLMApi {
     const isDeepseekReasoner =
       model_name.includes("deepseek-reasoner") ||
       model_name.includes("deepseek-r1");
+    const isClaudeThinking = model_name.includes("claude-3-7-sonnet");
     const isThinking =
-      model_name.includes("thinking") || isO1 || isO3 || isDeepseekReasoner;
+      model_name.includes("thinking") ||
+      isO1 ||
+      isO3 ||
+      isDeepseekReasoner ||
+      isClaudeThinking;
 
     const messages: ChatOptions["messages"] = [];
     for (const v of options.messages) {

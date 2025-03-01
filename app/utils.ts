@@ -295,6 +295,7 @@ export function isThinkingModel(model: string | undefined) {
     /^gpt-o1/,
     /^o3/,
     /^gpt-o3/,
+    /claude-3-7-sonnet/,
   ];
 
   return thinkingRegex.some((regex) => regex.test(model_name));
