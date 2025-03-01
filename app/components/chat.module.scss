@@ -41,11 +41,32 @@
     background-color: var(--white);
   }
 }
-
 .chat-input-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: space-between;
+  gap: 10px;
+  position: relative;
+  
+  > div {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    
+    &:first-child {
+      flex-shrink: 1;
+      overflow-x: auto;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    
+    &:last-child {
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+  }
 
   .chat-input-action {
     display: inline-flex;
@@ -62,9 +83,19 @@
     height: 16px;
     width: var(--icon-width);
     overflow: hidden;
+    flex-shrink: 0;
 
-    &:not(:last-child) {
-      margin-right: 5px;
+    &:hover {
+      --delay: 0.5s;
+      width: var(--full-width);
+      transition-delay: var(--delay);
+      z-index: 1;
+
+      .text {
+        transition-delay: var(--delay);
+        opacity: 1;
+        transform: translate(0);
+      }
     }
 
     .text {
@@ -76,18 +107,6 @@
       pointer-events: none;
     }
 
-    &:hover {
-      --delay: 0.5s;
-      width: var(--full-width);
-      transition-delay: var(--delay);
-
-      .text {
-        transition-delay: var(--delay);
-        opacity: 1;
-        transform: translate(0);
-      }
-    }
-
     .text,
     .icon {
       display: flex;
@@ -95,16 +114,16 @@
       justify-content: center;
     }
   }
-  /* 新增样式: 始终显示文本 */
+
   .chat-input-action.always-show-text {
     width: var(--full-width) !important;
-    transition: none; /* 取消过渡效果 */
-  }
-
-  .chat-input-action.always-show-text .text {
-    opacity: 1;
-    transform: translate(0);
-    pointer-events: auto;
+    transition: none;
+    
+    .text {
+      opacity: 1;
+      transform: translate(0);
+      pointer-events: auto;
+    }
   }
 }
 

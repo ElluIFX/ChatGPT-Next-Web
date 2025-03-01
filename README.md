@@ -13,7 +13,7 @@ docker 镜像：
 - 模型选择器优化
 - 快速搜索聊天记录
 - 可自定义**侧边栏**，支持 HTML 样式
-- 免导入导出的云备份功能（需配合[文件服务器项目](https://github.com/QAbot-zh/go-file-server)使用）
+- 免导入导出的云备份功能（需配合[文件服务器项目](https://github.com/QAbot-zh/go-file-server)使用）：[文件服务器搭建参考](#平台搭建)
 - OpenAI 类型支持前端配置，一键拉取可用模型
 
 <img src="./docs/images/getModels.png" width="80%" alt="get models"  style="display:inline-block; margin-left:40px"/>
@@ -69,74 +69,43 @@ docker 镜像：
 
 > [简体中文 > 如何配置 api key、访问密码、接口代理](./README_CN.md#环境变量)
 
-### `CODE` (optional)
+（一些重要的环境变量）
 
-Access password, separated by comma. （授权码，支持英文逗号分隔多个code）
+| 环境变量名称               | 描述       |
+|----------------------------|---------------------------------------------|
+| `CODE`                    | 可选。授权码，支持英文逗号分隔多个 code。|
+| `OPENAI_API_KEY`          | 必选。OpenAI API 密钥，支持英文逗号分隔多个 key。|
+| `BASE_URL`                | 可选。自定义 OpenAI API 请求的基础 URL，例如 `http://your-openai-proxy.com`，默认值：`https://api.openai.com`。|
+| `OPENAI_ORG_ID`           | 可选。指定 OpenAI 组织 ID。|
+| `HIDE_USER_API_KEY`       | 可选。设置为 `1` 禁止用户在前端输入自己的 API 密钥，默认值为空。|
+| `DISABLE_GPT4`            | 可选。设置为 `1` 禁止用户使用 GPT-4 及其相关高级模型（如 `gpt-4/chatgpt-4o`），默认值为空。|
+| `ENABLE_BALANCE_QUERY`    | 可选。设置为 `1` 允许用户查询 API 余额，默认值为空。|
+| `DISABLE_FAST_LINK`       | 可选。设置为 `1` 禁止通过 URL 解析参数，默认值为空。|
+| `CUSTOM_MODELS`           | 可选。自定义模型列表：<br> · 使用 `+` 添加模型<br> · 使用 `-` 隐藏模型<br> · 使用 `name=displayName<description>` 自定义模型名称<br> · 支持`<>`添加模型描述<br> · 支持通过 `-*provider` 禁用特定模型，`+*provider` 启用特定模型，`-all` 禁用所有默认模型，`+all` 启用所有默认模型，默认值为空。 <br> · 示例：`-*Azure,+claude-2,-gpt-3.5-turbo,deepseek-reason@OpenAI=DeepSeek-R1<深度求索 DeepSeek-R1 推理模型，热烈推荐>`。|
+| `SIDEBAR_TITLE`           | 可选。设置侧边栏标题，默认值为空。|
+| `SIDEBAR_SUBTITLE`        | 可选。设置侧边栏子标题，支持 HTML 解析，默认值为空。|
+| `SITE_TITLE`              | 可选。设置网站顶部标题，默认值为空。|
+| `COMPRESS_MODEL`          | 可选。设置标题生成和历史压缩模型，默认值：`gpt-4o-mini`。|
+| `TRANSLATE_MODEL`         | 可选。设置翻译模型，默认值：`gpt-4o-mini`。|
+| `OCR_MODEL`               | 可选。设置 OCR 模型，默认值：`gpt-4o-mini`。|
+| `CUSTOM_HELLO`            | 可选。自定义招呼语，覆盖默认的 `bot_hello`。|
+| `UNAUTHORIZED_INFO`       | 可选。自定义错误提示，覆盖默认的提示词，默认值为空。|
+| `WHITE_WEBDEV_ENDPOINTS`  | 可选。增加允许访问的 WebDAV 服务地址，每个地址需为完整的 endpoint，例如：`https://xxxx/yyy`，多个地址用逗号分隔，默认值为空。|
+| `DEFAULT_INPUT_TEMPLATE`  | 可选。自定义默认模板，用于初始化设置中的用户输入预处理配置项，默认值为空。|
+| `VISION_MODELS`           | 可选。设置具备视觉能力的模型，多个模型用英文逗号分隔，用于补充内置视觉能力模型，默认值为空。|
+| `ICON_POSITION`           | 可选。设置消息功能图标的位置，候选项：UP,DOWN,BOTH。默认值为 DOWN（对手机窄屏使用更友好）。|
 
-### `OPENAI_API_KEY` (required)
 
-Your openai api key, join multiple api keys with comma. （openai 密钥，支持英文逗号分隔多个key）
+------
 
-### `BASE_URL` (optional)
+关键示例：
 
-> Default: `https://api.openai.com`
-
-> Examples: `http://your-openai-proxy.com`
-
-Override openai api request base url. （openai 渠道自定义接口地址）
-
-### `OPENAI_ORG_ID` (optional)
-
-Specify OpenAI organization ID. （openai 组织 ID）
-
-### `HIDE_USER_API_KEY` (optional)
-
-> Default: Empty
-
-If you do not want users to input their own API key, set this value to 1. （要禁止前端使用用户的key，则设置该变量非空）
-
-### `DISABLE_GPT4` (optional)
-
-> Default: Empty
-
-If you do not want users to use GPT-4, set this value to 1. （要禁止用户使用 gpt4/chatgpt-4o/o1 等 gpt 高级模型，则设置该变量非空）
-
-### `ENABLE_BALANCE_QUERY` (optional)
-
-> Default: Empty
-
-If you do want users to query balance, set this value to 1. （要禁止用户查询api余额，则设置该变量非空）
-
-### `DISABLE_FAST_LINK` (optional)
-
-> Default: Empty
-
-If you want to disable parse settings from url, set this to 1. （要禁止url解析参数，则设置该变量非空）
-
-### `CUSTOM_MODELS` (optional)
-
-> Default: Empty
-> Example: `+llama,+claude-2,-gpt-3.5-turbo,gpt-4-1106-preview=gpt-4-turbo` means add `llama, claude-2` to model list, and remove `gpt-3.5-turbo` from list, and display `gpt-4-1106-preview` as `gpt-4-turbo`.
-
-To control custom models, use `+` to add a custom model, use `-` to hide a model, use `name=displayName<description>` to customize model name, separated by comma.
-
-User `-*provider` to disable specified models, `+*provider` to enable specified models.
-
-User `-all` to disable all default models, `+all` to enable all default models. （自定义模型参数）
-
- **支持通过<>设置模型描述**
-
- 示例：
+### `CUSTOM_MODELS`： **支持通过<>设置模型描述**
 
 ![model description](./docs/images/model-description.png)
 
-### `SIDEBAR_TITLE` (optional)
 
-Set the title of sidebar. （侧边栏标题）
-
-### `SIDEBAR_SUBTITLE` (optional)
-
-Set the subtitle of sidebar. Support html parsing. （侧边栏子标题，支持html解析）
+### `SIDEBAR_SUBTITLE` ：**侧边栏子标题，支持html解析**
 
 - html 示例：
 ```
@@ -161,42 +130,18 @@ Set the subtitle of sidebar. Support html parsing. （侧边栏子标题，支�
 
 ![alt text](image.png)
 
-### `SITE_TITLE` (optional)
+### `ICON_POSITION` 位置示意图
 
-Set the website title. （网站顶部标题）
+![icon position](./docs/images/icon_position.png)
 
-### `COMPRESS_MODEL` （optional）
+---------
+## 平台搭建
+感谢 [Reno](https://linux.do/u/Reno) 奉献的教程：
+[零成本搭建可扩展的AI对话平台，含文件服务搭建](https://linux.do/t/topic/444807)
 
-Set the title generation and history compression model. （设置标题生成、历史压缩模型，默认为 gpt-4o-mini）
+> **ps：不覆盖 api 成本**
 
-### `TRANSLATE_MODEL` （optional）
-
-Set the translate model. （设置翻译模型，默认为 gpt-4o-mini）
-
-### `OCR_MODEL` （optional）
-
-Set the ocr model. （设置 ocr 模型，默认为 gpt-4o-mini）
-
-### `CUSTOM_HELLO` (optional)
-
-Set the custom hello to cover default bot_hello. （自定义招呼语，覆盖默认的 bot_hello）
-
-### `UNAUTHORIZED_INFO` (optional)
-
-Set the unathorized info to cover default unathorized info. （自定义错误提示，覆盖默认的提示词）
-
-### `WHITE_WEBDEV_ENDPOINTS` (optional)
-
-You can use this option if you want to increase the number of webdav service addresses you are allowed to access, as required by the format：
-- Each address must be a complete endpoint
-> `https://xxxx/yyy`
-- Multiple addresses are connected by ', '
-
-### `DEFAULT_INPUT_TEMPLATE` (optional)
-
-Customize the default template used to initialize the User Input Preprocessing configuration item in Settings.
-
-
+-------
 ## LICENSE
 
 [MIT](https://opensource.org/license/mit/)

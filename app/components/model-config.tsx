@@ -65,61 +65,112 @@ export function ModelConfigList(props: {
         title={Locale.Settings.Temperature.Title}
         subTitle={Locale.Settings.Temperature.SubTitle}
       >
-        <InputRange
-          aria={Locale.Settings.Temperature.Title}
-          value={props.modelConfig.temperature?.toFixed(1)}
-          min="0"
-          max="1" // lets limit it to 0-1
-          step="0.1"
-          onChange={(e) => {
-            props.updateConfig(
-              (config) =>
-                (config.temperature = ModalConfigValidator.temperature(
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <input
+            aria-label={Locale.Settings.Temperature.Title}
+            type="number"
+            min={0}
+            max={1}
+            value={props.modelConfig.temperature.toFixed(1)}
+            disabled={!props.modelConfig.temperature_enabled}
+            style={{
+              width: "150px",
+              backgroundColor: props.modelConfig.temperature_enabled
+                ? "inherit"
+                : "#e0e0e0",
+            }}
+            onChange={(e) =>
+              props.updateConfig((config) => {
+                config.temperature = ModalConfigValidator.temperature(
                   e.currentTarget.valueAsNumber,
-                )),
-            );
-          }}
-        ></InputRange>
+                );
+              })
+            }
+          />
+          <input
+            type="checkbox"
+            checked={props.modelConfig.temperature_enabled}
+            onChange={(e) =>
+              props.updateConfig((config) => {
+                config.temperature_enabled = e.currentTarget.checked;
+              })
+            }
+          />
+        </div>
       </ListItem>
       <ListItem
         title={Locale.Settings.TopP.Title}
         subTitle={Locale.Settings.TopP.SubTitle}
       >
-        <InputRange
-          aria={Locale.Settings.TopP.Title}
-          value={(props.modelConfig.top_p ?? 1).toFixed(1)}
-          min="0"
-          max="1"
-          step="0.1"
-          onChange={(e) => {
-            props.updateConfig(
-              (config) =>
-                (config.top_p = ModalConfigValidator.top_p(
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <input
+            aria-label={Locale.Settings.TopP.Title}
+            type="number"
+            min={0}
+            max={1}
+            value={(props.modelConfig.top_p ?? 1).toFixed(1)}
+            disabled={!props.modelConfig.top_p_enabled}
+            style={{
+              width: "150px",
+              backgroundColor: props.modelConfig.top_p_enabled
+                ? "inherit"
+                : "#e0e0e0",
+            }}
+            onChange={(e) =>
+              props.updateConfig((config) => {
+                config.top_p = ModalConfigValidator.top_p(
                   e.currentTarget.valueAsNumber,
-                )),
-            );
-          }}
-        ></InputRange>
+                );
+              })
+            }
+          />
+          <input
+            type="checkbox"
+            checked={props.modelConfig.top_p_enabled}
+            onChange={(e) =>
+              props.updateConfig((config) => {
+                config.top_p_enabled = e.currentTarget.checked;
+              })
+            }
+          />
+        </div>
       </ListItem>
       <ListItem
         title={Locale.Settings.MaxTokens.Title}
         subTitle={Locale.Settings.MaxTokens.SubTitle}
       >
-        <input
-          aria-label={Locale.Settings.MaxTokens.Title}
-          type="number"
-          min={10}
-          max={512000}
-          value={props.modelConfig.max_tokens}
-          onChange={(e) =>
-            props.updateConfig(
-              (config) =>
-                (config.max_tokens = ModalConfigValidator.max_tokens(
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <input
+            aria-label={Locale.Settings.MaxTokens.Title}
+            type="number"
+            min={10}
+            max={512000}
+            value={props.modelConfig.max_tokens}
+            disabled={!props.modelConfig.max_tokens_enabled}
+            style={{
+              width: "150px",
+              backgroundColor: props.modelConfig.max_tokens_enabled
+                ? "inherit"
+                : "#e0e0e0",
+            }}
+            onChange={(e) =>
+              props.updateConfig((config) => {
+                config.max_tokens = ModalConfigValidator.max_tokens(
                   e.currentTarget.valueAsNumber,
-                )),
-            )
-          }
-        ></input>
+                );
+              })
+            }
+          />
+          <input
+            type="checkbox"
+            checked={props.modelConfig.max_tokens_enabled}
+            onChange={(e) =>
+              props.updateConfig((config) => {
+                config.max_tokens_enabled = e.currentTarget.checked;
+              })
+            }
+          />
+        </div>
       </ListItem>
 
       {props.modelConfig?.providerName == ServiceProvider.Google ? null : (
@@ -128,44 +179,77 @@ export function ModelConfigList(props: {
             title={Locale.Settings.PresencePenalty.Title}
             subTitle={Locale.Settings.PresencePenalty.SubTitle}
           >
-            <InputRange
-              aria={Locale.Settings.PresencePenalty.Title}
-              value={props.modelConfig.presence_penalty?.toFixed(1)}
-              min="-2"
-              max="2"
-              step="0.1"
-              onChange={(e) => {
-                props.updateConfig(
-                  (config) =>
-                    (config.presence_penalty =
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <input
+                aria-label={Locale.Settings.PresencePenalty.Title}
+                type="number"
+                min={-2}
+                max={2}
+                value={props.modelConfig.presence_penalty?.toFixed(1)}
+                disabled={!props.modelConfig.presence_penalty_enabled}
+                style={{
+                  width: "150px",
+                  backgroundColor: props.modelConfig.presence_penalty_enabled
+                    ? "inherit"
+                    : "#e0e0e0",
+                }}
+                onChange={(e) =>
+                  props.updateConfig((config) => {
+                    config.presence_penalty =
                       ModalConfigValidator.presence_penalty(
                         e.currentTarget.valueAsNumber,
-                      )),
-                );
-              }}
-            ></InputRange>
+                      );
+                  })
+                }
+              />
+              <input
+                type="checkbox"
+                checked={props.modelConfig.presence_penalty_enabled}
+                onChange={(e) =>
+                  props.updateConfig((config) => {
+                    config.presence_penalty_enabled = e.currentTarget.checked;
+                  })
+                }
+              />
+            </div>
           </ListItem>
 
           <ListItem
             title={Locale.Settings.FrequencyPenalty.Title}
             subTitle={Locale.Settings.FrequencyPenalty.SubTitle}
           >
-            <InputRange
-              aria={Locale.Settings.FrequencyPenalty.Title}
-              value={props.modelConfig.frequency_penalty?.toFixed(1)}
-              min="-2"
-              max="2"
-              step="0.1"
-              onChange={(e) => {
-                props.updateConfig(
-                  (config) =>
-                    (config.frequency_penalty =
-                      ModalConfigValidator.frequency_penalty(
-                        e.currentTarget.valueAsNumber,
-                      )),
-                );
-              }}
-            ></InputRange>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <input
+                aria-label={Locale.Settings.FrequencyPenalty.Title}
+                type="number"
+                min={-2}
+                max={2}
+                value={props.modelConfig.frequency_penalty?.toFixed(1)}
+                disabled={!props.modelConfig.frequency_penalty_enabled}
+                style={{
+                  width: "150px",
+                  backgroundColor: props.modelConfig.frequency_penalty_enabled
+                    ? "inherit"
+                    : "#e0e0e0",
+                }}
+                onChange={(e) =>
+                  props.updateConfig((config) => {
+                    config.frequency_penalty = ModalConfigValidator.top_p(
+                      e.currentTarget.valueAsNumber,
+                    );
+                  })
+                }
+              />
+              <input
+                type="checkbox"
+                checked={props.modelConfig.frequency_penalty_enabled}
+                onChange={(e) =>
+                  props.updateConfig((config) => {
+                    config.frequency_penalty_enabled = e.currentTarget.checked;
+                  })
+                }
+              />
+            </div>
           </ListItem>
 
           <ListItem

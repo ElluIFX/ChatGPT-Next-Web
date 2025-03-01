@@ -359,30 +359,16 @@ function CustomCode(props: { children: any; className?: string }) {
   );
 }
 
-// function escapeDollarNumber(text: string) {
-//   let escapedText = "";
-
-//   for (let i = 0; i < text.length; i += 1) {
-//     let char = text[i];
-//     const nextChar = text[i + 1] || " ";
-
-//     if (char === "$" && nextChar >= "0" && nextChar <= "9") {
-//       char = "\\$";
-//     }
-
-//     escapedText += char;
-//   }
-
-//   return escapedText;
-// }
 function escapeDollarNumber(text: string) {
   let escapedText = "";
   let isInMathExpression = false;
   let isInCodeBlock = false;
   let isInInlineCode = false;
+  let isInLatexBlock = false;
 
   for (let i = 0; i < text.length; i++) {
     let char = text[i];
+    const prevChar = text[i - 1] || " ";
     const nextChar = text[i + 1] || " ";
 
     // Toggle the isInCodeBlock flag when encountering a code block start or end indicator
@@ -400,8 +386,21 @@ function escapeDollarNumber(text: string) {
       continue;
     }
 
+    // Toggle the isInLatexBlock flag when encountering \[ or \]
+    if (char === "\\" && nextChar === "[" && !isInLatexBlock) {
+      isInLatexBlock = true;
+      escapedText += "\\[";
+      i++; // Skip the next character since we have already included it
+      continue;
+    } else if (char === "\\" && nextChar === "]" && isInLatexBlock) {
+      isInLatexBlock = false;
+      escapedText += "\\]";
+      i++; // Skip the next character since we have already included it
+      continue;
+    }
+
     // If inside a code block, preserve the character as is
-    if (isInCodeBlock || isInInlineCode) {
+    if (isInCodeBlock || isInInlineCode || isInLatexBlock) {
       escapedText += char;
       continue;
     }
@@ -425,35 +424,23 @@ function escapeDollarNumber(text: string) {
       char === "$" &&
       nextChar >= "0" &&
       nextChar <= "9" &&
-      !isInMathExpression
+      !isInMathExpression &&
+      !isInLatexBlock
     ) {
       escapedText += "&#36;"; // Use HTML entity &#36; to represent the dollar sign
       continue;
     }
+    // Process single tildes only if not in code block or inline code
+    if (char === "~" && prevChar !== "~" && nextChar !== "~") {
+      escapedText += "\\~"; // Escape single tilde
+      continue;
+    }
 
-    escapedText += char;
+    escapedText += char; // Add the character as is
   }
 
   return escapedText;
 }
-
-// function escapeBrackets(text: string) {
-//   const pattern =
-//     /(```[\s\S]*?```|`.*?`)|\\\[([\s\S]*?[^\\])\\\]|\\\((.*?)\\\)/g;
-//   return text.replace(
-//     pattern,
-//     (match, codeBlock, squareBracket, roundBracket) => {
-//       if (codeBlock) {
-//         return codeBlock;
-//       } else if (squareBracket) {
-//         return `$$${squareBracket}$$`;
-//       } else if (roundBracket) {
-//         return `$${roundBracket}$`;
-//       }
-//       return match;
-//     },
-//   );
-// }
 
 function escapeBrackets(text: string) {
   const pattern =

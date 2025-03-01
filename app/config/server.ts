@@ -22,6 +22,7 @@ declare global {
       DISABLE_FAST_LINK?: string; // disallow parse settings from url or not
       CUSTOM_MODELS?: string; // to control custom models
       DEFAULT_MODEL?: string; // to cnntrol default model in every new chat window
+      VISION_MODELS?: string; // to control vision models
 
       // azure only
       AZURE_URL?: string; // https://{azure-url}/openai/deployments/{deploy-name}
@@ -91,6 +92,7 @@ export const getServerSideConfig = () => {
   const disableGPT4 = !!process.env.DISABLE_GPT4;
   let customModels = process.env.CUSTOM_MODELS ?? "";
   let defaultModel = process.env.DEFAULT_MODEL ?? "";
+  let visionModels = process.env.VISION_MODELS ?? "";
 
   if (disableGPT4) {
     if (customModels) customModels += ",";
@@ -171,6 +173,7 @@ export const getServerSideConfig = () => {
     disableFastLink: !!process.env.DISABLE_FAST_LINK,
     customModels,
     defaultModel,
+    visionModels,
     allowedWebDevEndpoints,
 
     fastApiKey,
@@ -184,5 +187,7 @@ export const getServerSideConfig = () => {
     compressModel: process.env.COMPRESS_MODEL,
     translateModel: process.env.TRANSLATE_MODEL,
     ocrModel: process.env.OCR_MODEL,
+
+    iconPosition: process.env.ICON_POSITION || "down",
   };
 };

@@ -70,6 +70,8 @@ import {
   getMessageImages,
   isVisionModel,
   safeLocalStorage,
+  isThinkingModel,
+  wrapThinkingPart,
 } from "../utils";
 
 import { uploadImage as uploadImageRemote } from "@/app/utils/chat";
@@ -1529,6 +1531,11 @@ function _Chat() {
   Locale.Error.Unauthorized =
     accessStore.UnauthorizedInfo || Locale.Error.Unauthorized;
 
+  // icon position
+  const iconPosition = accessStore.iconPosition.toLowerCase() || "down";
+  const iconUpEnabled = iconPosition === "up" || iconPosition === "both";
+  const iconDownEnabled = iconPosition === "down" || iconPosition === "both";
+
   async function openaiSpeech(text: string) {
     if (speechStatus) {
       ttsPlayer.stop();
@@ -2092,7 +2099,11 @@ function _Chat() {
                   <div className={styles["chat-message-item"]}>
                     <Markdown
                       key={message.streaming ? "loading" : "done"}
-                      content={getMessageTextContent(message)}
+                      content={
+                        !message.streaming && isThinkingModel(message.model)
+                          ? wrapThinkingPart(getMessageTextContent(message))
+                          : getMessageTextContent(message)
+                      }
                       loading={
                         (message.preview || message.streaming) &&
                         message.content.length === 0 &&
@@ -2150,7 +2161,7 @@ function _Chat() {
                       ? Locale.Chat.IsContext
                       : `${message.date.toLocaleString()}`}
                   </div>
-                  {showActions && (
+                  {iconDownEnabled && showActions && (
                     <div className={styles["chat-message-actions"]}>
                       <div className={styles["chat-input-actions"]}>
                         <ChatInputActions

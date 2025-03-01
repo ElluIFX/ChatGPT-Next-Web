@@ -166,8 +166,8 @@ export class ChatGPTApi implements LLMApi {
       const content = visionModel
         ? await preProcessImageContent(v)
         : v.role === "assistant" // 如果 role 是 assistant
-          ? getMessageTextContentWithoutThinking(v) // 调用 getMessageTextContentWithoutThinking
-          : getMessageTextContent(v); // 否则调用 getMessageTextContent
+        ? getMessageTextContentWithoutThinking(v) // 调用 getMessageTextContentWithoutThinking
+        : getMessageTextContent(v); // 否则调用 getMessageTextContent
       if (!(isO1 && v.role === "system"))
         messages.push({ role: v.role, content });
     }
@@ -240,31 +240,46 @@ export class ChatGPTApi implements LLMApi {
       // top_p: !isO1 ? modelConfig.top_p : 1,
     };
     if (!isDeepseekReasoner) {
-      (requestPayload["temperature"] = !isO1 ? modelConfig.temperature : 1),
-        (requestPayload["top_p"] = !isO1 ? modelConfig.top_p : 1);
+      if (modelConfig.temperature_enabled) {
+        requestPayload["temperature"] = !isO1 ? modelConfig.temperature : 1;
+      }
+      if (modelConfig.top_p_enabled) {
+        requestPayload["top_p"] = !isO1 ? modelConfig.top_p : 1;
+      }
     }
 
     // add max_tokens to vision model
     // if (visionModel && modelConfig.model.includes("preview")) {
-    if (
-      (visionModel &&
-        modelConfig.model !== "gpt-4-turbo" &&
-        !isGlm4v &&
-        !thinkingModel) ||
-      isMiniMax
-    ) {
-      requestPayload["max_tokens"] = Math.max(modelConfig.max_tokens, 4000);
+    if (modelConfig.max_tokens_enabled) {
+      if (
+        (visionModel &&
+          modelConfig.model !== "gpt-4-turbo" &&
+          !isGlm4v &&
+          !thinkingModel) ||
+        isMiniMax ||
+        isDeepseekReasoner
+      ) {
+        requestPayload["max_tokens"] = Math.max(modelConfig.max_tokens, 4000);
+      }
     }
-    if (isDeepseekReasoner) {
-      requestPayload["max_tokens"] = Math.max(modelConfig.max_tokens, 4000); // 兼容部分厂商无法支持8k输出
-    }
+
     if (!isMistral && !isDeepseekReasoner) {
-      requestPayload["presence_penalty"] = modelConfig.presence_penalty;
-      requestPayload["frequency_penalty"] = modelConfig.frequency_penalty;
+      if (modelConfig.presence_penalty_enabled) {
+        requestPayload["presence_penalty"] = modelConfig.presence_penalty;
+      }
+      if (modelConfig.frequency_penalty_enabled) {
+        requestPayload["frequency_penalty"] = modelConfig.frequency_penalty;
+      }
       if (isO1) {
-        requestPayload["presence_penalty"] = 0;
-        requestPayload["frequency_penalty"] = 0;
-        requestPayload["max_completion_tokens"] = modelConfig.max_tokens;
+        if (modelConfig.presence_penalty_enabled) {
+          requestPayload["presence_penalty"] = 0;
+        }
+        if (modelConfig.frequency_penalty_enabled) {
+          requestPayload["frequency_penalty"] = 0;
+        }
+        if (modelConfig.max_tokens_enabled) {
+          requestPayload["max_completion_tokens"] = modelConfig.max_tokens;
+        }
       }
     }
 

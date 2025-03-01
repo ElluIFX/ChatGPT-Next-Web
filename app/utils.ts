@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { showToast } from "./components/ui-lib";
 import Locale from "./locales";
 import { RequestMessage } from "./client/api";
+import { useAccessStore } from "./store";
+import { VISION_MODEL_REGEXES, EXCLUDE_VISION_MODEL_REGEXES } from "./constant";
 
 export function trimTopic(topic: string) {
   // Fix an issue where double quotes still show in the Indonesian language
@@ -269,35 +271,59 @@ export function getMessageImages(message: RequestMessage): string[] {
 }
 
 export function isVisionModel(model: string) {
-  // Note: This is a better way using the TypeScript feature instead of `&&` or `||` (ts v5.5.0-dev.20240314 I've been using)
-
-  const excludeKeywords = ["claude-3-5-haiku-20241022"];
-  const visionKeywords = [
-    "vision",
-    "gpt-4o",
-    "claude-3",
-    "gemini-1.5",
-    "gemini-2.0",
-    "gemini-exp",
-    "learnlm",
-    "pixtral",
-    "qwen-vl",
-    "qwen2-vl",
-    "glm-4v",
-  ];
-  const isGpt4Turbo =
-    model.includes("gpt-4-turbo") && !model.includes("preview");
-
+  const visionModels = useAccessStore.getState().visionModels;
+  const envVisionModels = visionModels?.split(",").map((m) => m.trim());
+  if (envVisionModels?.includes(model)) {
+    return true;
+  }
   return (
-    (!excludeKeywords.some((keyword) => model.includes(keyword)) &&
-      visionKeywords.some((keyword) => model.includes(keyword))) ||
-    isGpt4Turbo
+    !EXCLUDE_VISION_MODEL_REGEXES.some((regex) => regex.test(model)) &&
+    VISION_MODEL_REGEXES.some((regex) => regex.test(model))
   );
 }
 
-export function isThinkingModel(model: string) {
-  const thinkingKeywords = ["thinking"]; // 暂时针对 gemini-2.0-flash-thinking-exp 设置
-  return thinkingKeywords.some((keyword) => model.includes(keyword));
+export function isThinkingModel(model: string | undefined) {
+  if (!model) {
+    return false;
+  }
+  const model_name = model.toLowerCase();
+  const thinkingRegex = [
+    /thinking/,
+    /reason/,
+    /deepseek-r1/,
+    /^o1/,
+    /^gpt-o1/,
+    /^o3/,
+    /^gpt-o3/,
+  ];
+
+  return thinkingRegex.some((regex) => regex.test(model_name));
+}
+export function wrapThinkingPart(full_reply: string) {
+  // 处理无闭合<think>标签的情况
+  if (full_reply.includes("</think>") && !full_reply.startsWith("<think>")) {
+    return `<think>\n${full_reply}`;
+  }
+  // 处理引用式思考回复的情况
+  if (!full_reply.startsWith(">")) {
+    return full_reply;
+  }
+  // 使用正则表达式匹配以 > 开头的连续行
+  const thinkingPattern = /(^>.*(\n(?:>.*|\s*$))*)/m;
+  const match = full_reply.match(thinkingPattern);
+
+  if (match) {
+    // 获取匹配到的 thinking part
+    const thinkingPart = match[0];
+    // 将 thinking part 包裹在 <think> 标签中
+    const wrappedThinkingPart = `<think>\n${thinkingPart}\n</think>\n`;
+    // 替换原字符串中的 thinking part
+    const result = full_reply.replace(thinkingPattern, wrappedThinkingPart);
+    return result;
+  }
+
+  // 如果没有匹配到 thinking part，则返回原字符串
+  return full_reply;
 }
 export function safeLocalStorage(): {
   getItem: (key: string) => string | null;
