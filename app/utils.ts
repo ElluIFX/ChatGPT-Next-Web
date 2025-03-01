@@ -326,6 +326,9 @@ export function wrapThinkingPart(full_reply: string) {
   if (full_reply.includes("</think>") && !full_reply.startsWith("<think>")) {
     return `<think>\n${full_reply}`;
   }
+  if (full_reply.includes("<think>") && !full_reply.includes("</think>")) {
+    return `${full_reply}\n</think>`;
+  }
   // 处理引用式思考回复的情况
   if (!full_reply.startsWith(">")) {
     return full_reply;
