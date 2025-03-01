@@ -31,6 +31,7 @@ import {
   getMessageTextContentWithoutThinking,
   isVisionModel,
   isThinkingModel,
+  wrapThinkingPart,
 } from "@/app/utils";
 import { preProcessImageContent } from "@/app/utils/chat";
 
@@ -148,7 +149,6 @@ export class ChatGPTApi implements LLMApi {
 
   async chat(options: ChatOptions) {
     const visionModel = isVisionModel(options.config.model);
-    const thinkingModel = isThinkingModel(options.config.model);
     const model_name = options.config.model.toLowerCase();
     const isO1 = model_name.startsWith("o1") || model_name.startsWith("gpt-o1");
     const isO3 = model_name.startsWith("o3") || model_name.startsWith("gpt-o3");
@@ -158,13 +158,10 @@ export class ChatGPTApi implements LLMApi {
     const isDeepseekReasoner =
       model_name.includes("deepseek-reasoner") ||
       model_name.includes("deepseek-r1");
-    const isClaudeThinking = model_name.includes("claude-3-7-sonnet");
-    const isThinking =
-      model_name.includes("thinking") ||
-      isO1 ||
-      isO3 ||
-      isDeepseekReasoner ||
-      isClaudeThinking;
+    const thinkingModel = isThinkingModel(model_name);
+
+    // const isThinking =
+    //   model_name.includes("thinking") || isO1 || isO3 || isDeepseekReasoner;
 
     const messages: ChatOptions["messages"] = [];
     for (const v of options.messages) {
@@ -312,7 +309,7 @@ export class ChatGPTApi implements LLMApi {
       // make a fetch request
       const requestTimeoutId = setTimeout(
         () => controller.abort(),
-        isThinking ? REQUEST_TIMEOUT_MS * 10 : REQUEST_TIMEOUT_MS,
+        thinkingModel ? REQUEST_TIMEOUT_MS * 10 : REQUEST_TIMEOUT_MS,
       );
 
       if (shouldStream) {
@@ -320,6 +317,8 @@ export class ChatGPTApi implements LLMApi {
         let remainText = "";
         let finished = false;
         let isInThinking = false;
+        let thinkingStartTime = 0;
+        let totalThinkingTime = 0;
 
         // animate response to make it looks smooth
         function animateResponseText() {
@@ -352,10 +351,13 @@ export class ChatGPTApi implements LLMApi {
         const finish = () => {
           if (!finished) {
             finished = true;
-            options.onFinish(
-              responseText + remainText,
-              new Response(null, { status: 200 }),
-            );
+            if (isInThinking) {
+              const finalThinkingDuration = Date.now() - thinkingStartTime;
+              totalThinkingTime += finalThinkingDuration;
+            }
+            let full_reply = responseText + remainText;
+            full_reply = wrapThinkingPart(full_reply);
+            options.onFinish(full_reply, new Response(null, { status: 200 }));
           }
         };
 
@@ -437,6 +439,8 @@ export class ChatGPTApi implements LLMApi {
 
               if (reasoning && reasoning.length > 0) {
                 if (!isInThinking) {
+                  thinkingStartTime = Date.now();
+                  isInThinking = true;
                   remainText += "<think>\n" + reasoning;
                 } else {
                   remainText += reasoning;
@@ -445,6 +449,8 @@ export class ChatGPTApi implements LLMApi {
               } else if (content && content.length > 0) {
                 if (isInThinking) {
                   isInThinking = false;
+                  const thinkingDuration = Date.now() - thinkingStartTime;
+                  totalThinkingTime += thinkingDuration;
                   remainText += "\n</think>\n\n" + content;
                 } else {
                   remainText += content;
