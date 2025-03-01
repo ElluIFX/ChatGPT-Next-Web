@@ -253,8 +253,29 @@ export function getMessageTextContentWithoutThinking(message: RequestMessage) {
 export function getMessageTextContentWithoutThinkingFromContent(
   content: string,
 ) {
-  const pattern = /^<think>[\s\S]*?(<\/think>|$)/; // 匹配以 <think> 开头，至闭合 </think>之间的内容，如果没有闭合，则匹配到结尾
-  return content.replace(pattern, "").trim(); // 直接移除匹配的部分
+  // 情况1: 开头为 <think>，移除至 </think> 之间的内容，如果没有闭合，则匹配至结尾
+  // 对应标准的 <think>...</think> 标签，但是可能由于思考过度导致没有闭合标签
+  if (content.startsWith("<think>")) {
+    const pattern = /^<think>[\s\S]*?(<\/think>|$)/;
+    return content.replace(pattern, "").trim();
+  }
+
+  // 情况2: 开头没有 <think>，但包含 </think>，移除开头至 </think> 之间的内容
+  // 对应思考内容丢失<think>标签，部分模型 api 有此现象
+  if (content.includes("</think>")) {
+    const pattern = /[\s\S]*?<\/think>/;
+    return content.replace(pattern, "").trim();
+  }
+
+  // 情况3: 开头为 >，移除以 > 开头的连续行（直到中断）
+  // 对应逆向模型，使用 > 开头的引用式思考回复
+  if (content.startsWith(">")) {
+    const thinkingPattern = /(^>.*(\n(?:>.*|\s*$))*)/m;
+    return content.replace(thinkingPattern, "").trim();
+  }
+
+  // 如果以上情况都不匹配，直接返回原内容
+  return content.trim();
 }
 
 export function getMessageImages(message: RequestMessage): string[] {
