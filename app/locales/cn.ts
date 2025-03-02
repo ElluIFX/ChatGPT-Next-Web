@@ -163,6 +163,11 @@ const cn = {
       Title: "包含面具上下文",
       SubTitle: "是否在消息中展示面具上下文",
     },
+    UseDisplayName: {
+      Title: "是否使用别名",
+      SubTitle:
+        "是否在消息中使用别名(DisplayName)，如模型未定义别名则使用原来的名称",
+    },
     Steps: {
       Select: "选取",
       Preview: "预览",

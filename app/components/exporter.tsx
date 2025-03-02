@@ -41,6 +41,7 @@ import { getClientConfig } from "../config/client";
 import { ClientApi } from "../client/api";
 import { getMessageTextContent } from "../utils";
 import { identifyDefaultClaudeModel } from "../utils/checkers";
+import { useAllModels } from "../utils/hooks";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -156,6 +157,7 @@ export function MessageExporter() {
   const [exportConfig, setExportConfig] = useState({
     format: "image" as ExportFormat,
     includeContext: true,
+    useDisplayName: true,
   });
 
   function updateExportConfig(updater: (config: typeof exportConfig) => void) {
@@ -183,15 +185,27 @@ export function MessageExporter() {
   function preview() {
     if (exportConfig.format === "text") {
       return (
-        <MarkdownPreviewer messages={selectedMessages} topic={session.topic} />
+        <MarkdownPreviewer
+          messages={selectedMessages}
+          topic={session.topic}
+          useDisplayName={exportConfig.useDisplayName}
+        />
       );
     } else if (exportConfig.format === "json") {
       return (
-        <JsonPreviewer messages={selectedMessages} topic={session.topic} />
+        <JsonPreviewer
+          messages={selectedMessages}
+          topic={session.topic}
+          useDisplayName={exportConfig.useDisplayName}
+        />
       );
     } else {
       return (
-        <ImagePreviewer messages={selectedMessages} topic={session.topic} />
+        <ImagePreviewer
+          messages={selectedMessages}
+          topic={session.topic}
+          useDisplayName={exportConfig.useDisplayName}
+        />
       );
     }
   }
@@ -237,6 +251,20 @@ export function MessageExporter() {
               onChange={(e) => {
                 updateExportConfig(
                   (config) => (config.includeContext = e.currentTarget.checked),
+                );
+              }}
+            ></input>
+          </ListItem>
+          <ListItem
+            title={Locale.Export.UseDisplayName.Title}
+            subTitle={Locale.Export.UseDisplayName.SubTitle}
+          >
+            <input
+              type="checkbox"
+              checked={exportConfig.useDisplayName}
+              onChange={(e) => {
+                updateExportConfig(
+                  (config) => (config.useDisplayName = e.currentTarget.checked),
                 );
               }}
             ></input>
@@ -437,6 +465,7 @@ function ExportAvatar(props: ExportAvatarProps) {
 export function ImagePreviewer(props: {
   messages: ChatMessage[];
   topic: string;
+  useDisplayName: boolean;
 }) {
   const chatStore = useChatStore();
   const session = chatStore.currentSession();
@@ -528,7 +557,19 @@ export function ImagePreviewer(props: {
       dom.innerHTML = dom.innerHTML; // Refresh the content of the preview by resetting its HTML for fix a bug glitching
     }
   };
-
+  const allModels = useAllModels();
+  const currentModelName = useMemo(() => {
+    if (props.useDisplayName) {
+      const model = allModels.find(
+        (m) =>
+          m.name == mask.modelConfig.model &&
+          m?.provider?.providerName == mask.modelConfig.providerName,
+      );
+      return model?.displayName ?? mask.modelConfig.model;
+    } else {
+      return mask.modelConfig.model;
+    }
+  }, [allModels, mask.modelConfig.model, mask.modelConfig.providerName]);
   return (
     <div className={styles["image-previewer"]}>
       <PreviewActions
@@ -559,12 +600,12 @@ export function ImagePreviewer(props: {
             <div className={styles["icons"]}>
               <ExportAvatar avatar={config.avatar} />
               <span className={styles["icon-space"]}>&</span>
-              <ExportAvatar model={mask.modelConfig.model} />
+              <ExportAvatar model={currentModelName} />
             </div>
           </div>
           <div>
             <div className={styles["chat-info-item"]}>
-              {Locale.Exporter.Model}: {mask.modelConfig.model}
+              {Locale.Exporter.Model}: {currentModelName}
             </div>
             <div className={styles["chat-info-item"]}>
               {Locale.Exporter.Messages}: {props.messages.length}
@@ -638,6 +679,7 @@ export function ImagePreviewer(props: {
 export function MarkdownPreviewer(props: {
   messages: ChatMessage[];
   topic: string;
+  useDisplayName: boolean;
 }) {
   const mdText =
     `# ${props.topic}\n\n` +
@@ -673,6 +715,7 @@ export function MarkdownPreviewer(props: {
 export function JsonPreviewer(props: {
   messages: ChatMessage[];
   topic: string;
+  useDisplayName: boolean;
 }) {
   const msgs = {
     messages: [

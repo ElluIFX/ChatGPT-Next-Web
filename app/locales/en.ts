@@ -168,6 +168,11 @@ const en: LocaleType = {
       Title: "Including Context",
       SubTitle: "Export context prompts in mask or not",
     },
+    UseDisplayName: {
+      Title: "Use DisplayName",
+      SubTitle:
+        "Use DisplayName in exported messages, if the model does not define an alias, the original name will be used",
+    },
     Steps: {
       Select: "Select",
       Preview: "Preview",
