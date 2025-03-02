@@ -50,18 +50,39 @@ const ThinkCollapse = styled(
       }
     }, [title]);
 
+    const toggleCollapse = () => {
+      if (!disabled) {
+        setActiveKeys(activeKeys.length ? [] : ["1"]);
+      }
+    };
+
+    const handleRightClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      toggleCollapse();
+    };
+
+    const handleDoubleClick = () => {
+      toggleCollapse();
+    };
+
     return (
-      <Collapse
-        className={`${className} ${disabled ? "disabled" : ""}`}
-        size="small"
-        activeKey={activeKeys}
-        onChange={(keys) => !disabled && setActiveKeys(keys as string[])}
-        bordered={false}
+      <div
+        onContextMenu={handleRightClick}
+        onDoubleClick={handleDoubleClick}
+        className={className}
       >
-        <Panel header={title} key="1">
-          {children}
-        </Panel>
-      </Collapse>
+        <Collapse
+          className={`${disabled ? "disabled" : ""}`}
+          size="small"
+          activeKey={activeKeys}
+          onChange={(keys) => !disabled && setActiveKeys(keys as string[])}
+          bordered={false}
+        >
+          <Panel header={title} key="1">
+            {children}
+          </Panel>
+        </Collapse>
+      </div>
     );
   },
 )<{ fontSize?: number }>`
