@@ -72,7 +72,7 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
     let IconComponent;
     let model = props.model.toLowerCase();
     switch (true) {
-      case model.includes("o1") || model.includes("o3"):
+      case /^(o1|o3)|gpt-(o1|o3)/.test(model):
         IconComponent = BotIconBlack;
         break;
       case model.includes("claude"):
@@ -84,7 +84,7 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       case model.includes("deepseek"):
         IconComponent = BotIconDeepseek;
         break;
-      case model.includes("doubao"):
+      case model.includes("doubao") || model.startsWith("ep-"):
         IconComponent = BotIconDoubao;
         break;
       case model.includes("flux"):
@@ -93,7 +93,9 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       case model.includes("gemini") || model.includes("learnlm"):
         IconComponent = BotIconGemini;
         break;
-      case model.includes("glm") || model.includes("cogvideo"):
+      case model.includes("glm") ||
+        model.startsWith("cogview-") ||
+        model.startsWith("cogvideox-"):
         IconComponent = BotIconGLM;
         break;
       case model.includes("grok"):
@@ -117,10 +119,12 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       case model.includes("abab"):
         IconComponent = BotIconMinimax;
         break;
-      case model.includes("mistral") || model.includes("pixtral"):
+      case model.includes("mistral") ||
+        model.includes("pixtral") ||
+        model.includes("codestral"):
         IconComponent = BotIconMistral;
         break;
-      case model.includes("moonshot"):
+      case model.includes("moonshot") || model.includes("kimi"):
         IconComponent = BotIconMoonshot;
         break;
       case model.includes("qwen") || model.includes("qwq"):
@@ -153,8 +157,9 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
         IconComponent = BotIcon;
     }
     return (
-      <div className="no-dark">
-        <IconComponent />
+      // <div className="no-dark">
+      <div className="user-avatar">
+        <IconComponent width={28} height={28} />
       </div>
     );
   }
