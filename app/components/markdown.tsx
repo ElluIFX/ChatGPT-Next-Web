@@ -480,9 +480,9 @@ function formatThinkText(text: string): string {
     // 渲染为"思考完成"状态
     // 如果 thinkContent 为空，则渲染为"没有思考过程"状态
     if (thinkContent.trim() === "") {
-      return `<thinkcollapse title="${Locale.NewChat.NoThink}">\n</thinkcollapse>`;
+      return `<thinkcollapse title="${Locale.NewChat.NoThink}">\n</thinkcollapse>\n`;
     }
-    return `<thinkcollapse title="${Locale.NewChat.Think}">\n${thinkContent}\n</thinkcollapse>`;
+    return `<thinkcollapse title="${Locale.NewChat.Think}">\n${thinkContent}\n\n</thinkcollapse>\n`;
   });
 }
 
