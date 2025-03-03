@@ -39,6 +39,8 @@ export type ChatMessage = RequestMessage & {
   isError?: boolean;
   id: string;
   model?: ModelType;
+  displayName?: string;
+  providerName?: string;
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
@@ -392,6 +394,7 @@ export const useChatStore = createPersistStore(
           role: "assistant",
           streaming: true,
           model: modelConfig.model,
+          providerName: modelConfig.providerName || "OpenAI",
         });
 
         // get recent messages

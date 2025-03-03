@@ -630,7 +630,13 @@ export function ImagePreviewer(props: {
               <div className={styles["avatar"]}>
                 <ExportAvatar
                   avatar={m.role === "user" ? config.avatar : mask.avatar}
-                  model={m.role === "user" ? undefined : m.model}
+                  model={
+                    m.role === "user"
+                      ? undefined
+                      : props.useDisplayName
+                      ? m.displayName || m.model
+                      : m.model
+                  }
                 />
               </div>
 
