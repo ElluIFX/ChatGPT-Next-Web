@@ -2327,13 +2327,11 @@ export function Chat() {
   }, [allModels]);
   // Update session messages based on modelTable
   useEffect(() => {
-    // 仅在 modelTable 变化或首次加载 session 时执行, 且当前会话未更新过displayName
-    if (hasUpdatedDisplayName.current) return;
+    // 仅在 session 最后一条消息 id 变化时执行，即有新的消息进入队列
 
     let messagesChanged = false;
     for (let i = 0; i < session.messages.length; i++) {
       const message = session.messages[i];
-      // 增加对 message.provider 的存在性检查
       if (message.role !== "user" && !message.displayName && message.model) {
         const displayName = modelTable.find(
           (model) =>
@@ -2344,12 +2342,8 @@ export function Chat() {
         if (displayName !== message.displayName) {
           // 仅当 displayName 发生变化时才更新
           session.messages[i].displayName = displayName;
-          messagesChanged = true;
         }
       }
-    }
-    if (messagesChanged) {
-      hasUpdatedDisplayName.current = true;
     }
   }, [session.messages[session.messages.length - 1]?.id]);
 
