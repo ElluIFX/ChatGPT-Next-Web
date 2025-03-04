@@ -638,7 +638,8 @@ const en: LocaleType = {
     Import: "Import",
     Sync: "Sync",
     Config: "Config",
-    SearchModel: "search model",
+    SearchModel: "Search Model",
+    SelectALL: "All Models",
   },
   Exporter: {
     Description: {

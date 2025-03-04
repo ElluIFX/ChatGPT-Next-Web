@@ -631,6 +631,7 @@ const cn = {
     Sync: "同步",
     Config: "配置",
     SearchModel: "搜索模型",
+    SelectALL: "所有模型",
   },
   Exporter: {
     Description: {

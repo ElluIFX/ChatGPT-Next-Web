@@ -26,6 +26,7 @@ const DANGER_CONFIG = {
   sidebarTitle: siderbarConfig.title,
   sidebarSubTitle: siderbarConfig.subTitle,
   siteTitle: siderbarConfig.siteTitle,
+  selectLabels: serverConfig.selectLabels,
 };
 
 declare global {

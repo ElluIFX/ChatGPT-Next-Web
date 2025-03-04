@@ -94,6 +94,7 @@ docker 镜像：
 | `DEFAULT_INPUT_TEMPLATE`  | 可选。自定义默认模板，用于初始化设置中的用户输入预处理配置项，默认值为空。|
 | `VISION_MODELS`           | 可选。设置具备视觉能力的模型，多个模型用英文逗号分隔，用于补充内置视觉能力模型，默认值为空。|
 | `ICON_POSITION`           | 可选。设置消息功能图标的位置，候选项：UP,DOWN,BOTH。默认值为 DOWN（对手机窄屏使用更友好）。|
+| `SELECT_LABELS`           | 可选。设置模型选择的标签，用于模型的筛选，配合模型描述使用，注意：仅匹配模型描述的内容。 |
 
 
 ------
@@ -133,6 +134,8 @@ docker 镜像：
 ### `ICON_POSITION` 位置示意图
 
 ![icon position](./docs/images/icon_position.png)
+
+### `SELECT_LABELS` ： 模型筛选标签
 
 ---------
 ## 平台搭建

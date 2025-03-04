@@ -312,6 +312,8 @@
 
   &-content {
     min-width: 25%;
+    width: 50%;        /* 设置内容区域的宽度为 50% */
+    max-width: 600px; /* 添加最大宽度限制 */
     .list {
       max-height: 90vh;
       overflow-x: hidden;
@@ -332,17 +334,41 @@
     }
   }
   &-search {
+    display: flex;         /* 使用 Flexbox 布局 */
+    align-items: center;   /* 垂直居中对齐 */
     border-bottom: 1px solid var(--gray-200);
+    padding: 8px; /* 添加一些内边距 */
+    justify-content: center;
   }
+
   &-search-input {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 8px 12px;
-    border: none;
+    flex: 1;
+    padding: 10px 16px; /* 增大内边距 */
+    border: 1px solid #ccc;
+    border-radius: 20px; /* 更大的圆角 */
+    font-size: 16px; /* 增大字体大小 */
+    margin-right: 8px;
     outline: none;
-    font-size: 14px;
+    transition: border-color 0.3s ease; /* 平滑过渡效果 */
+
+     &:focus {
+        background-color: var(--gray-50);
+        border-color: var(--primary); /* 聚焦时改变边框颜色 */
+      }
   }
-  &-search-input:focus {
-    background-color: var(--gray-50);
+
+  &-rule-select {
+    padding: 10px 16px; /* 增大内边距 */
+    border: 1px solid #ccc;
+    border-radius: 20px;/* 更大的圆角 */
+    outline: none;
+    background-color: white;
+    cursor: pointer;
+    min-width: 80px;
+    font-size: 16px;/* 增大字体大小 */
+    transition: border-color 0.3s ease; /* 平滑过渡效果 */
+    &:focus{
+       border-color: var(--primary); /* 聚焦时改变边框颜色 */
+    }
   }
 }
