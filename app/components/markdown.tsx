@@ -487,6 +487,7 @@ function formatBoldText(text: string) {
   });
 }
 function formatThinkText(text: string): string {
+  text = text.trimStart();
   // 检查是否以 <think> 开头但没有结束标签
   if (text.startsWith("<think>") && !text.includes("</think>")) {
     // 获取 <think> 后的所有内容

@@ -322,6 +322,7 @@ export function isThinkingModel(model: string | undefined) {
   return thinkingRegex.some((regex) => regex.test(model_name));
 }
 export function wrapThinkingPart(full_reply: string) {
+  full_reply = full_reply.trimStart();
   // 处理无闭合<think>标签的情况
   if (full_reply.includes("</think>") && !full_reply.startsWith("<think>")) {
     return `<think>\n${full_reply}`;
