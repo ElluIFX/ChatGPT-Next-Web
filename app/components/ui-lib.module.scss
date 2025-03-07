@@ -343,12 +343,13 @@
 
   &-search-input {
     flex: 1;
-    padding: 10px 16px; /* 增大内边距 */
+    padding: 8px 12px; 
     border: 1px solid #ccc;
-    border-radius: 20px; /* 更大的圆角 */
-    font-size: 16px; /* 增大字体大小 */
+    border-radius: 12px; 
+    font-size: 16px;
     margin-right: 8px;
     outline: none;
+    min-width: 60%;
     transition: border-color 0.3s ease; /* 平滑过渡效果 */
 
      &:focus {
@@ -358,17 +359,42 @@
   }
 
   &-rule-select {
-    padding: 10px 16px; /* 增大内边距 */
+    padding: 8px 12px; 
     border: 1px solid #ccc;
-    border-radius: 20px;/* 更大的圆角 */
+    border-radius: 12px;
     outline: none;
     background-color: white;
     cursor: pointer;
-    min-width: 80px;
-    font-size: 16px;/* 增大字体大小 */
+    min-width: 60px;
+    font-size: 16px;
     transition: border-color 0.3s ease; /* 平滑过渡效果 */
     &:focus{
        border-color: var(--primary); /* 聚焦时改变边框颜色 */
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  .selector {
+    align-items: flex-start;
+    padding-top: 20px;
+    
+    &-content {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    &-search-input {
+      font-size: 14px;
+    }
+    &-rule-select {
+      min-width: 40px;
+      font-size: 14px;
+    }
+    .list {
+      max-height: calc(100vh - 140px); 
+      height: 100%;
+      background: white;
     }
   }
 }
