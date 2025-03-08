@@ -8,30 +8,32 @@ import { ModelType } from "../store";
 
 import BotIcon from "../icons/bot.svg";
 import BotIconBlack from "../icons/black-bot.svg";
-import BotIconClaude from "../icons/bot-claude.svg";
-import BotIconCohere from "../icons/bot-cohere.svg";
-import BotIconDeepseek from "../icons/bot-deepseek.svg";
-import BotIconDoubao from "../icons/bot-doubao.svg";
-import BotIconFlux from "../icons/bot-flux.svg";
-import BotIconGemini from "../icons/bot-gemini.svg";
-import BotIconGLM from "../icons/bot-glm.svg";
-import BotIconGrok from "../icons/bot-grok.svg";
-import BotIconHunyuan from "../icons/bot-hunyuan.svg";
-import BotIconInternlm from "../icons/bot-internlm.svg";
-import BotIconLlama from "../icons/bot-llama.svg";
-import BotIconLuma from "../icons/bot-luma.svg";
-import BotIconMidjourney from "../icons/bot-midjourney.svg";
-import BotIconMinimax from "../icons/bot-minimax.svg";
-import BotIconMistral from "../icons/bot-mistral.svg";
-import BotIconMoonshot from "../icons/bot-moonshot.svg";
-import BotIconQwen from "../icons/bot-qwen.svg";
-import BotIconRunway from "../icons/bot-runway.svg";
-import BotIconSparkdesk from "../icons/bot-sparkdesk.svg";
-import BotIconStability from "../icons/bot-stability.svg";
-import BotIconStep from "../icons/bot-stepfun.svg";
-import BotIconSuno from "../icons/bot-suno.svg";
-import BotIconWenxin from "../icons/bot-wenxin.svg";
-import BotIconYi from "../icons/bot-yi.svg";
+import BotIconDefault from "../icons/llm-icons/default-ai.svg";
+import BotIconAzure from "../icons/llm-icons/azure.svg";
+import BotIconClaude from "../icons/llm-icons/claude.svg";
+import BotIconCohere from "../icons/llm-icons/cohere.svg";
+import BotIconDeepseek from "../icons/llm-icons/deepseek.svg";
+import BotIconDoubao from "../icons/llm-icons/doubao.svg";
+import BotIconFlux from "../icons/llm-icons/flux.svg";
+import BotIconGemini from "../icons/llm-icons/gemini.svg";
+import BotIconGLM from "../icons/llm-icons/glm.svg";
+import BotIconGrok from "../icons/llm-icons/grok.svg";
+import BotIconHunyuan from "../icons/llm-icons/hunyuan.svg";
+import BotIconInternlm from "../icons/llm-icons/internlm.svg";
+import BotIconLlama from "../icons/llm-icons/llama.svg";
+import BotIconLuma from "../icons/llm-icons/luma.svg";
+import BotIconMidjourney from "../icons/llm-icons/midjourney.svg";
+import BotIconMinimax from "../icons/llm-icons/minimax.svg";
+import BotIconMistral from "../icons/llm-icons/mistral.svg";
+import BotIconMoonshot from "../icons/llm-icons/moonshot.svg";
+import BotIconQwen from "../icons/llm-icons/qwen.svg";
+import BotIconRunway from "../icons/llm-icons/runway.svg";
+import BotIconSparkdesk from "../icons/llm-icons/sparkdesk.svg";
+import BotIconStability from "../icons/llm-icons/stability.svg";
+import BotIconStep from "../icons/llm-icons/stepfun.svg";
+import BotIconSuno from "../icons/llm-icons/suno.svg";
+import BotIconWenxin from "../icons/llm-icons/wenxin.svg";
+import BotIconYi from "../icons/llm-icons/yi.svg";
 
 export function getEmojiUrl(unified: string, style: EmojiStyle) {
   // Whoever owns this Content Delivery Network (CDN), I am using your CDN to serve emojis
@@ -57,23 +59,18 @@ export function AvatarPicker(props: {
 }
 
 export function Avatar(props: { model?: ModelType; avatar?: string }) {
-  // if (props.model) {
-  //   return (
-  //     <div className="no-dark">
-  //       {props.model?.startsWith("gpt-4") ? (
-  //         <BlackBotIcon className="user-avatar" />
-  //       ) : (
-  //         <BotIcon className="user-avatar" />
-  //       )}
-  //     </div>
-  //   );
-  // }
   if (props.model) {
     let IconComponent;
     let model = props.model.toLowerCase();
     switch (true) {
       case /^(o1|o3)|gpt-(o1|o3)/.test(model):
         IconComponent = BotIconBlack;
+        break;
+      case model.includes("gpt-"):
+        IconComponent = BotIcon;
+        break;
+      case model.includes("phi-"):
+        IconComponent = BotIconAzure;
         break;
       case model.includes("claude"):
         IconComponent = BotIconClaude;
@@ -154,12 +151,11 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
         IconComponent = BotIconYi;
         break;
       default:
-        IconComponent = BotIcon;
+        IconComponent = BotIconDefault;
     }
     return (
-      // <div className="no-dark">
-      <div className="user-avatar">
-        <IconComponent width={28} height={28} />
+      <div className="no-dark">
+        <IconComponent width={30} height={30} />
       </div>
     );
   }

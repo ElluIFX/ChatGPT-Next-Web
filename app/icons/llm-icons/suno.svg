@@ -1,0 +1,7 @@
+<svg height="1em" style="flex:none;line-height:1" viewBox="0 0 30 30" width="1em" xmlns="http://www.w3.org/2000/svg">
+    <title>Suno</title>
+    <rect width="30" height="30" fill="#E7F8FF" rx="6"/>
+    <g transform="translate(3, 3)">
+        <path d="M16.5 0C20.642 0 24 5.373 24 12h-9c0 6.627-3.358 12-7.5 12C3.358 24 0 18.627 0 12h9c0-6.627 3.358-12 7.5-12z" fill="currentColor" fill-rule="evenodd"></path>
+    </g>
+</svg>
