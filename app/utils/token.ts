@@ -1,3 +1,11 @@
+import { encodingForModel } from "js-tiktoken";
+
+const enc = encodingForModel("gpt-3.5-turbo");
+
+export function estimateTokenLengthInLLM(input: string): number {
+  return enc.encode(input).length;
+}
+
 export function estimateTokenLength(input: string): number {
   let tokenLength = 0;
 

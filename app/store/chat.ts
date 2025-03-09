@@ -23,7 +23,7 @@ import type {
 import { getClientApi } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
-import { estimateTokenLength } from "../utils/token";
+import { estimateTokenLengthInLLM } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
 import { safeLocalStorage } from "../utils";
@@ -127,7 +127,7 @@ function createTemplateRegex(output: string) {
 
 function countMessages(msgs: ChatMessage[]) {
   return msgs.reduce(
-    (pre, cur) => pre + estimateTokenLength(getMessageTextContent(cur)),
+    (pre, cur) => pre + estimateTokenLengthInLLM(getMessageTextContent(cur)),
     0,
   );
 }
