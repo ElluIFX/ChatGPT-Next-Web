@@ -632,6 +632,7 @@ const cn = {
     Config: "配置",
     SearchModel: "搜索模型",
     SelectALL: "所有模型",
+    NoPresetRule: "未预置规则",
   },
   Exporter: {
     Description: {

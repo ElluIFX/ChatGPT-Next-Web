@@ -488,7 +488,7 @@ export function SearchSelector<T>(props: {
   const accessStore = useAccessStore();
 
   const [presetRules, setPresetRules] = useState<string[]>(
-    accessStore.selectLabels.split(","),
+    accessStore.selectLabels.split(",").filter((label) => label.trim() !== ""),
   );
   const [selectedRule, setSelectedRule] = useState<string>("");
 
@@ -570,12 +570,25 @@ export function SearchSelector<T>(props: {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <option value="">{Locale.UI.SelectALL}</option>
-              {presetRules.map((rule, index) => (
-                <option key={index} value={rule}>
-                  {rule}
-                </option>
-              ))}
+              {presetRules.length === 0 ? (
+                <>
+                  <option value="">{Locale.UI.SelectALL}</option>
+                  <option value="" disabled>
+                    <option key="0" value={Locale.UI.NoPresetRule}>
+                      {Locale.UI.NoPresetRule}
+                    </option>
+                  </option>
+                </>
+              ) : (
+                <>
+                  <option value="">{Locale.UI.SelectALL}</option>
+                  {presetRules.map((rule, index) => (
+                    <option key={index} value={rule}>
+                      {rule}
+                    </option>
+                  ))}
+                </>
+              )}
             </select>
           </div>
           {filteredItems.map((item, i) => {

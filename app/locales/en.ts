@@ -640,6 +640,7 @@ const en: LocaleType = {
     Config: "Config",
     SearchModel: "Search Model",
     SelectALL: "All Models",
+    NoPresetRule: "No preset rules",
   },
   Exporter: {
     Description: {
