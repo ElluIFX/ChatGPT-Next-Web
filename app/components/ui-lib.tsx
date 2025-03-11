@@ -582,8 +582,8 @@ export function SearchSelector<T>(props: {
           </div>
           {filteredItems.map((item, i) => {
             const selected = selectedValues.includes(item.value);
-            const icon = (item.title as string).includes("temp") ? undefined : (
-              <Avatar model={item.title as string} />
+            const icon = (item.value as string).includes("temp") ? undefined : (
+              <Avatar model={item.value as string} />
             );
             return (
               <ListItem
