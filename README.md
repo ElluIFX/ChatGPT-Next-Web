@@ -1,4 +1,4 @@
-# ChatGPT Next Web 二创
+# ChatGPT Next Web ~~二~~三创
 > 原项目：[ChatGPTNextWeb](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 
 
