@@ -562,34 +562,23 @@ export function SearchSelector<T>(props: {
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
-            <select
-              className={styles["selector-rule-select"]}
-              value={selectedRule}
-              onChange={(e) => {
-                setSelectedRule(e.target.value);
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {presetRules.length === 0 ? (
-                <>
-                  <option value="">{Locale.UI.SelectALL}</option>
-                  <option value="" disabled>
-                    <option key="0" value={Locale.UI.NoPresetRule}>
-                      {Locale.UI.NoPresetRule}
-                    </option>
+            {presetRules.length > 0 && (
+              <select
+                className={styles["selector-rule-select"]}
+                value={selectedRule}
+                onChange={(e) => {
+                  setSelectedRule(e.target.value);
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <option value="">{Locale.UI.SelectALL}</option>
+                {presetRules.map((rule, index) => (
+                  <option key={index} value={rule}>
+                    {rule}
                   </option>
-                </>
-              ) : (
-                <>
-                  <option value="">{Locale.UI.SelectALL}</option>
-                  {presetRules.map((rule, index) => (
-                    <option key={index} value={rule}>
-                      {rule}
-                    </option>
-                  ))}
-                </>
-              )}
-            </select>
+                ))}
+              </select>
+            )}
           </div>
           {filteredItems.map((item, i) => {
             const selected = selectedValues.includes(item.value);
