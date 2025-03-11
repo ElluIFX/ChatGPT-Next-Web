@@ -593,8 +593,8 @@ export function SearchSelector<T>(props: {
           </div>
           {filteredItems.map((item, i) => {
             const selected = selectedValues.includes(item.value);
-            const icon = (item.value as string).includes("temp") ? undefined : (
-              <Avatar model={item.value as string} />
+            const icon = (item.title as string).includes("temp") ? undefined : (
+              <Avatar model={item.title as string} />
             );
             return (
               <ListItem
@@ -603,7 +603,7 @@ export function SearchSelector<T>(props: {
                 }`}
                 key={i}
                 center={icon === undefined}
-                icon={<Avatar model={item.title as string} />}
+                icon={icon}
                 title={item.title}
                 subTitle={item.subTitle}
                 onClick={(e) => {
